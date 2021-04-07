@@ -11,7 +11,6 @@ namespace FolderAutoUploader
 {
     public partial class Form1 : Form
     {
-
         public List<DateTime> dates = new List<DateTime>();
         private DateTime DailyTime;
         private DateTime _dateLastRan;
@@ -34,6 +33,8 @@ namespace FolderAutoUploader
 
         public static System.Timers.Timer timer;
 
+        public int _folderLimit;
+
         public Form1()
         {
             InitializeComponent();
@@ -44,6 +45,7 @@ namespace FolderAutoUploader
             toolTip1.SetToolTip(this.overwriteCheckbox, "Deletes and Creates a new folder with the same name");
             toolTip1.SetToolTip(this.dailyCheckBox, "Used to set the upload to 'daily' (Will save on exit and not allow other dates to be stored)");
             toolTip1.SetToolTip(this.datePickerButton, "*WIP*");
+
             //Rich text box
             loggerInfo.HideSelection = false;
 
@@ -79,13 +81,18 @@ namespace FolderAutoUploader
 
                 dates = datesData.dates;
                 _dailyChecked = datesData.dailyChecked;
-                _alreadyRanToday = datesData.alreadyRanToday; //Nothing to reset it right now
+                _alreadyRanToday = datesData.alreadyRanToday;
                 _dateLastRan = datesData.dateLastRan;
+                _folderLimit = datesData.folderLimit;
+
             }
             else
             {
                 Print("Dates file not created yet (Will happen on first ever launch or if the file gets deleted)");
             }
+
+            //Set the value of the incriminate
+            numericUpDown1.Value = _folderLimit;
 
             //Check and see if the program already ran today and if not set it to false
             if (_alreadyRanToday)
@@ -152,6 +159,7 @@ namespace FolderAutoUploader
             datesData.dailyChecked = _dailyChecked;
             datesData.alreadyRanToday = _alreadyRanToday;
             datesData.dateLastRan = _dateLastRan;
+            datesData.folderLimit = _folderLimit;
 
             using (FileStream stream = File.OpenWrite(datesFileLocation))
             {
@@ -463,11 +471,12 @@ namespace FolderAutoUploader
         }
         #endregion
 
-        private void button1_Click(object sender = null, EventArgs e = null)
+        public void button1_Click(object sender = null, EventArgs e = null)
         {
             int count = 0;
-            int limit = 10;
+            int limit = _folderLimit + 5;
             string newPath = "";
+            int folders;
 
             string replaceNewPath = replacePath;
 
@@ -502,9 +511,27 @@ namespace FolderAutoUploader
                 {
                     for (int i = 0; i < limit; i++)
                     {
-                        if (i > limit)
+                        folders = count + 1;
+
+                        if (folders > _folderLimit)
                         {
                             Print("File searching went over the threshold");
+                            
+                            //Create prompt asking for deletion
+                            PromptForm promptForm = new PromptForm();
+                            promptForm.text = "You have more backups than your limit. Would you like to remove some?";
+                            DialogResult dialogResult = promptForm.ShowDialog();
+
+                            if(dialogResult == DialogResult.OK)
+                            {
+                                FileSelectionAndDeletionForm FLADF = new FileSelectionAndDeletionForm();
+                                FLADF._replacePath = replacePath;
+                                FLADF._mainForm = this;
+                                FLADF.Show();
+                            }
+
+                            promptForm.Dispose();
+
                             break;
                         }
 
@@ -771,6 +798,11 @@ namespace FolderAutoUploader
         {
 
         }
+
+        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        {
+            _folderLimit = (int)numericUpDown1.Value;
+        }
     }
 
     [Serializable]
@@ -781,5 +813,6 @@ namespace FolderAutoUploader
 
         public bool dailyChecked;
         public bool alreadyRanToday;
+        public int folderLimit;
     }
 }
