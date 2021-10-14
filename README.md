@@ -8,4 +8,4 @@ First head over to the `Releases tab` and look for the latest release, or click 
 ### FOR NEWER RELEASES
 For newer releases `V0.0.3.2+`, all you need to do is download the `msi` file from the release page and run it. 
 
-`Make sure you have .NET 4.7.2 framework installed (If not the program should install it for you or ask to do so)`
+`Make sure you have .NET 4.7.2 framework installed (If not, the program should install it for you, or ask to do so)`
