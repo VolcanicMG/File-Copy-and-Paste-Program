@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Forms;
 
@@ -13,7 +15,7 @@ namespace FolderAutoUploader
     {
         public List<DateTime> dates = new List<DateTime>();
         private DateTime DailyTime;
-        private DateTime _dateLastRan;
+        public DateTime _dateLastRan;
 
         public bool _dailyChecked;
         public bool _alreadyRanToday;
@@ -26,14 +28,15 @@ namespace FolderAutoUploader
         private string saveFileLocation;
         private string datesFileLocation;
 
-        Thread workerThread;
-        public bool workin;
-
-        public int actualFiles;
+        public static bool workin;
 
         public static System.Timers.Timer timer;
 
-        public int _folderLimit;
+        public static int _folderLimit;
+
+        //Used for the schedule form
+        public static List<LocationsAdd> _scheduleLocations;
+        public static List<ProcessHelper> _processes;
 
         public Form1()
         {
@@ -49,16 +52,19 @@ namespace FolderAutoUploader
             //Rich text box
             loggerInfo.HideSelection = false;
 
-            //Get the path
+            //Get the path for the locations 
             string folderName = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             saveFileLocation = folderName + @"\CopyPasteData\locationSaves.txt";
 
-            //Get the path
+            //Get the path for the dates
             string folderNameDates = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             datesFileLocation = folderNameDates + @"\CopyPasteData\dates.bin";
 
+            //set and reset
+            _scheduleLocations = new List<LocationsAdd>();
+
             //Check to make sure the directory is created
-            if (!CheckDirectory(folderName + @"\CopyPasteData"))
+            if (!ProcessHelper.CheckDirectory(folderName + @"\CopyPasteData"))
             {
                 Directory.CreateDirectory(folderName + @"\CopyPasteData");
             }
@@ -70,29 +76,44 @@ namespace FolderAutoUploader
             //Set the calendar to not precede today
             dateTimePicker.MinDate = DateTime.Today;
 
+            _processes = new List<ProcessHelper>();
+
             //Load in the dates file and check it
             if (File.Exists(datesFileLocation))
             {
                 IFormatter formatter = new BinaryFormatter();
 
                 Stream stream = new FileStream(datesFileLocation, FileMode.Open, FileAccess.Read, FileShare.Read);
-                Data datesData = (Data)formatter.Deserialize(stream);
+                Data infoData = (Data)formatter.Deserialize(stream);
                 stream.Close();
 
-                dates = datesData.dates;
-                _dailyChecked = datesData.dailyChecked;
-                _alreadyRanToday = datesData.alreadyRanToday;
-                _dateLastRan = datesData.dateLastRan;
-                _folderLimit = datesData.folderLimit;
+                dates = infoData.dates;
+                _dailyChecked = infoData.dailyChecked;
+                _alreadyRanToday = infoData.alreadyRanToday;
+                _dateLastRan = infoData.dateLastRan;
+                _folderLimit = infoData.folderLimit;
+                _scheduleLocations = infoData.scheduleLocations;
 
+                //Used for the first time or when there is nothing
+                if (_scheduleLocations == null)
+                {
+                    _scheduleLocations = new List<LocationsAdd>();
+                }
             }
             else
             {
-                Print("Dates file not created yet (Will happen on first ever launch or if the file gets deleted)");
+                //Print("Dates file not created yet (Will happen on first ever launch or if the file gets deleted)"); //WILL CAUSE ERROR ATM. MOVE TO LOAD?
             }
 
             //Set the value of the incriminate
-            numericUpDown1.Value = _folderLimit;
+            if (_folderLimit != null && _folderLimit > 0)
+            {
+                numericUpDown1.Value = _folderLimit;
+            }
+            else numericUpDown1.Value = 5;
+
+            numericUpDown1.Maximum = 15;
+            numericUpDown1.Minimum = 1;
 
             //Check and see if the program already ran today and if not set it to false
             if (_alreadyRanToday)
@@ -125,7 +146,7 @@ namespace FolderAutoUploader
             //on exit save all the dates
             AppDomain.CurrentDomain.ProcessExit += new EventHandler(OnExit);
 
-            //Print($"Already ran today: {_alreadyRanToday}. The Date last ran: {_dateLastRan}");
+            //ProcessHelper.Print($"Already ran today: {_alreadyRanToday}. The Date last ran: {_dateLastRan}");
         }
 
 
@@ -150,20 +171,27 @@ namespace FolderAutoUploader
         /// <summary>
         /// Used to save the dates and other daily things that need saved
         /// </summary>
-        private void SaveDates()
+        private void Save()
         {
-            BinaryFormatter formatter = new BinaryFormatter();
-            Data datesData = new Data();
+            //Save the selected
+            for (int i = 0; i < checkedListBoxLocations.Items.Count; i++)
+            {
+                _scheduleLocations[i].selected = checkedListBoxLocations.GetItemChecked(i);
+            }
 
-            datesData.dates = dates;
-            datesData.dailyChecked = _dailyChecked;
-            datesData.alreadyRanToday = _alreadyRanToday;
-            datesData.dateLastRan = _dateLastRan;
-            datesData.folderLimit = _folderLimit;
+            BinaryFormatter formatter = new BinaryFormatter();
+            Data infoData = new Data();
+
+            infoData.dates = dates;
+            infoData.dailyChecked = _dailyChecked;
+            infoData.alreadyRanToday = _alreadyRanToday;
+            infoData.dateLastRan = _dateLastRan;
+            infoData.folderLimit = _folderLimit;
+            infoData.scheduleLocations = _scheduleLocations;
 
             using (FileStream stream = File.OpenWrite(datesFileLocation))
             {
-                formatter.Serialize(stream, datesData);
+                formatter.Serialize(stream, infoData);
                 stream.Close();
             }
         }
@@ -176,43 +204,24 @@ namespace FolderAutoUploader
         private void OnExit(object sender, EventArgs e)
         {
 
-            if (CheckDirectory(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\CopyPasteData"))
+            if (ProcessHelper.CheckDirectory(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\CopyPasteData"))
             {
-                SaveDates();
+                Save();
             }
             else
             {
                 Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\CopyPasteData");
 
-                SaveDates();
+                Save();
             }
 
-        }
-
-        /// <summary>
-        /// Logger
-        /// </summary>
-        /// <param name="print"></param>
-        public void Print(string print)
-        {
-            if (print != null && !print.Equals("") && SynchronizationContext.Current != null)
-            {
-                loggerInfo.AppendText("[" + DateTime.Now + "] " + print + "\n");
-            }
-            else if (print != null && !print.Equals(""))
-            {
-                Invoke(new Action(() =>
-                {
-                    loggerInfo.AppendText("[" + DateTime.Now + "] " + print + "\n");
-                }));
-            }
         }
 
         /// <summary>
         /// Enable or disable of the buttons
         /// </summary>
         /// <param name="on"></param>
-        private void EnableButtons(bool on)
+        public void EnableButtons(bool on)
         {
             Invoke(new Action(() =>
             {
@@ -226,103 +235,27 @@ namespace FolderAutoUploader
                 searchButton1.Enabled = on;
                 searchButton2.Enabled = on;
             }));
-            
+
         }
 
-        /// <summary>
-        /// Used to check the existence of a directory
-        /// </summary>
-        /// <param name="directory"></param>
-        /// <returns></returns>
-        private bool CheckDirectory(string directory)
-        {
-            if (Directory.Exists(directory))
-            {
-                return true;
-            }
-            else return false;
-        }
-
-        /// <summary>
-        ///Used to count all the files in a directory including those within sub directories
-        /// </summary>
-        /// <param name="uploadLoc">The path used to find the directory</param>
-        private void countFiles(string uploadLoc)
-        {
-            if (CheckDirectory(uploadLoc))
-            {
-
-                DirectoryInfo dir = new DirectoryInfo(uploadLoc);
-                FileInfo[] files = dir.GetFiles();
-                DirectoryInfo[] dirs = dir.GetDirectories();
-
-                //Copy over all the files
-                foreach (FileInfo file in files)
-                {
-
-                    Invoke(new Action(() =>
-                    {
-                        actualFiles++;
-                    }));
-
-                }
-
-                //sub folders
-                foreach (DirectoryInfo subdir in dirs)
-                {
-                    string tempPath = Path.Combine(uploadLoc, subdir.Name);
-
-                    countFiles(subdir.FullName);
-                }
-
-            }
-            else
-            {
-                Invoke(new Action(() =>
-                {
-                    Print("Error - not found");
-                    Print(CheckDirectory(uploadLoc).ToString() + "-" + " uploadLoc");
-                }));
-            }
-        }
 
         /// <summary>
         /// Reset the buttons to make sure everything can be used again
         /// </summary>
-        private void Reset()
+        public void Reset()
         {
 
-            if (SynchronizationContext.Current != null)
+            Invoke(new Action(() =>
             {
                 EnableButtons(true);
-
-                if (workerThread != null && workerThread.IsAlive)
-                {
-                    workerThread.Abort();
-                }
 
                 progressBar1.Value = 0;
                 progressBar2.Value = 0;
 
                 fileInfoLabel.Text = "";
                 folderInfoLabel.Text = "";
-
-            }
-            else
-            {
-                Invoke(new Action(() =>
-                {
-                    EnableButtons(true);
-
-                    workerThread.Abort();
-
-                    progressBar1.Value = 0;
-                    progressBar2.Value = 0;
-
-                    fileInfoLabel.Text = "";
-                    folderInfoLabel.Text = "";
-                }));
-            }
+                runningLabel.Text = "";
+            }));
 
         }
 
@@ -336,8 +269,8 @@ namespace FolderAutoUploader
 
             using (StreamWriter sw = File.AppendText(saveFileLocation))
             {
-                sw.WriteLine(uploadPath);
-                sw.WriteLine(replacePath);
+                sw.WriteLine(uploadLocationString.Text);
+                sw.WriteLine(replaceLocationString.Text);
 
                 sw.Close();
             }
@@ -345,6 +278,11 @@ namespace FolderAutoUploader
             Print("Upload and replace path have been saved");
         }
 
+        /// <summary>
+        /// Used to specify the event that happens once the timer runs out
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public void timer_Elapsed(object sender, ElapsedEventArgs e)
         {
             DateTime now = DateTime.Now;
@@ -352,8 +290,11 @@ namespace FolderAutoUploader
 
             DailyTime = new DateTime(now.Year, now.Month, now.Day, 1, 0, 0, 0);
 
-            if (DailyTime <= now)
+            if (DailyTime <= now && _dailyChecked)
             {
+                //Change the label to running
+                runningLabel.Text = "Running...";
+
                 //Load in the file setting if there are any
                 LoadButton_Click();
 
@@ -363,235 +304,29 @@ namespace FolderAutoUploader
                     {
                         button1_Click(); //Predefine some of the paths for the buttons to respond too (Use the load button)
                     }));
-                    
+
                     Print("Starting...");
                 }
                 else
                 {
-                    Print("You need to save something in order for the program to work daily or automatically. Find a coping place and replace path and save them. The next day the progrogam will find it.");
+                    Print("You need to save something in order for the program to work daily or automatically. Find a coping place and replace path and save them. The next day the program will find it.");
                 }
 
                 _alreadyRanToday = true;
                 _dateLastRan = now;
-
-                timer.Stop();
-                timer.Dispose();
             }
+
+            timer.Stop();
+            timer.Dispose();
         }
 
-        /// <summary>
-        /// Used to copy and paste folders
-        /// </summary>
-        /// <param name="upload"></param>
-        /// <param name="replace"></param>
-        private void ConvergeFiles(string upload, string replace)
-        {
-            if (CheckDirectory(replace) && CheckDirectory(upload))
-            {
-                Invoke(new Action(() =>
-                {
-                    progressBar1.Value = 0;
-                    
-                    folderInfoLabel.Text = "Folder: " + replace;
-                }));
-
-                DirectoryInfo dir = new DirectoryInfo(upload);
-                FileInfo[] files = dir.GetFiles();
-                DirectoryInfo[] dirs = dir.GetDirectories();
-
-                //Set the size of the progress bar's max
-                Invoke(new Action(() =>
-                {
-                    if (dirs.Length > 0)
-                    {
-                        progressBar1.Maximum = dirs.Length * files.Length;
-                    }
-                    else
-                    {
-                        progressBar1.Maximum = files.Length;
-                    }
-                }));
-
-                //Print("Number of folders: " + dirs.Length);
-                //Print("Number of files: " + files.Length);
-
-                //Copy over all the files
-                foreach (FileInfo file in files)
-                {
-                    string tempPath = Path.Combine(replace, file.Name);
-                    file.CopyTo(tempPath, false);
-
-                    Invoke(new Action(() =>
-                    {
-                        fileInfoLabel.Text = "File: " + Path.GetFileName(tempPath);
-
-                        progressBar1.Value += 1;
-                        progressBar2.Value += 1;
-
-                        actualFiles--;
-                    }));
-
-                }
-
-                //sub folders
-                foreach (DirectoryInfo subdir in dirs)
-                {
-                    string tempPath = Path.Combine(replace, subdir.Name);
-                    Directory.CreateDirectory(tempPath);
-
-                    ConvergeFiles(subdir.FullName, tempPath);
-                }
-
-                Invoke(new Action(() =>
-                {
-                    progressBar1.Value = progressBar1.Maximum;
-                }));
-
-                //The program has stopped
-                if (actualFiles == 0)
-                {
-                    Print("Done!");
-                    workin = false;
-
-                    _dateLastRan = DateTime.Today;
-
-                    Reset();
-                }
-            }
-            else
-            {
-                Invoke(new Action(() =>
-                {
-                    Print("Error");
-
-                    Print(CheckDirectory(replace).ToString() + "-" + " Replace");
-                    Print(CheckDirectory(upload).ToString() + "-" + " Upload");
-                }));
-            }
-        }
         #endregion
 
+        //Used to start an copy action
         public void button1_Click(object sender = null, EventArgs e = null)
         {
-            int count = 0;
-            int limit = _folderLimit + 5;
-            string newPath = "";
-            int folders;
-
-            string replaceNewPath = replacePath;
-
-            //Reset the progress bar
-            progressBar1.Value = 0;
-            progressBar2.Value = 0;
-
-            actualFiles = 0;
-
-            uploadPath = uploadLocationString.Text;
-            replacePath = replaceLocationString.Text;
-
-            //Disable the buttons once the program starts
-            EnableButtons(false);
-
-            Print($"Upload Path: {uploadPath}");
-            Print($"Replace Path: {replacePath}");
-
-            //Check to make sure both paths exist
-            if (CheckDirectory(uploadPath) && CheckDirectory(replacePath))
-            {
-                workin = true;
-
-                //Count the amount of files
-                countFiles(uploadPath);
-
-                progressBar2.Maximum = actualFiles;
-
-                Print($"Files: {actualFiles}");
-
-                if (!overwriteFiles)
-                {
-                    for (int i = 0; i < limit; i++)
-                    {
-                        folders = count + 1;
-
-                        if (folders > _folderLimit)
-                        {
-                            Print("File searching went over the threshold");
-                            
-                            //Create prompt asking for deletion
-                            PromptForm promptForm = new PromptForm();
-                            promptForm.text = "You have more backups than your limit. Would you like to remove some?";
-                            DialogResult dialogResult = promptForm.ShowDialog();
-
-                            if(dialogResult == DialogResult.OK)
-                            {
-                                FileSelectionAndDeletionForm FLADF = new FileSelectionAndDeletionForm();
-                                FLADF._replacePath = replacePath;
-                                FLADF._mainForm = this;
-                                FLADF.Show();
-                            }
-
-                            promptForm.Dispose();
-
-                            break;
-                        }
-
-                        if (CheckDirectory(replaceNewPath + i))
-                        {
-                            Print($"Replace path: {replaceNewPath + i}");
-                            count++;
-                        }
-                        else
-                        {
-                            newPath = replaceNewPath += count;
-                            Print($"New Path: {newPath}");
-
-                            //Create the new folder
-                            Directory.CreateDirectory(newPath);
-
-                            //converge
-                            workerThread = new Thread(() => ConvergeFiles(uploadPath, newPath));
-                            workerThread.Start();
-
-                            break;
-                        }
-                    }
-                }
-                else
-                {
-                    Print("Deleting folder");
-
-                    //Delete and create a fresh folder
-                    DirectoryInfo dir = new DirectoryInfo(replacePath);
-
-                    foreach (FileInfo file in dir.GetFiles())
-                    {
-                        file.Delete();
-                    }
-                    foreach (DirectoryInfo dirs in dir.GetDirectories())
-                    {
-                        dirs.Delete(true);
-                    }
-
-                    Print("Deleting complete");
-
-                    //overwrite and create new folders
-                    Directory.Delete(replacePath);
-
-                    Directory.CreateDirectory(replacePath);
-
-                    //start the thread for the application
-                    workerThread = new Thread(() => ConvergeFiles(uploadPath, replacePath));
-                    workerThread.Start();
-                }
-
-            }
-            else
-            {
-                Print("Error - One or more files do not exist");
-
-                Reset();
-            }
-
+            ProcessHelper copy = new ProcessHelper(this, true, 0, uploadLocationString.Text, replaceLocationString.Text, overwriteFiles, _folderLimit, progressBar1, progressBar2, folderInfoLabel, fileInfoLabel);
+            copy.Start();
         }
 
         private void Upload_Click(object sender, EventArgs e)
@@ -616,8 +351,8 @@ namespace FolderAutoUploader
 
         private void DatePicker_Click(object sender, EventArgs e)
         {
-            //Print the date in the logger
-            //Print(dateTimePicker.Text);
+            //ProcessHelper.Print the date in the logger
+            //ProcessHelper.Print(dateTimePicker.Text);
 
             if (!dates.Contains(dateTimePicker.Value))
             {
@@ -652,7 +387,7 @@ namespace FolderAutoUploader
                 string folder = folderBrowserDialog1.SelectedPath;
 
                 //check to make sure the directory exists
-                if (CheckDirectory(folder))
+                if (ProcessHelper.CheckDirectory(folder))
                 {
                     uploadPath = folder;
 
@@ -669,7 +404,7 @@ namespace FolderAutoUploader
                 string folder = folderBrowserDialog1.SelectedPath;
 
                 //check to make sure the directory exists
-                if (CheckDirectory(folder))
+                if (ProcessHelper.CheckDirectory(folder))
                 {
                     replacePath = folder;
 
@@ -687,7 +422,7 @@ namespace FolderAutoUploader
         {
             overwriteFiles = overwriteCheckbox.Checked;
 
-            //Print(overwriteFile.ToString());
+            //ProcessHelper.Print(overwriteFile.ToString());
         }
 
         private void loggerClearButton_Click(object sender, EventArgs e)
@@ -700,7 +435,7 @@ namespace FolderAutoUploader
 
         private void SaveButton_Click(object sender, EventArgs e)
         {
-            if ((CheckDirectory(uploadPath) && CheckDirectory(replacePath)) && (!uploadPath.Equals("") || !replacePath.Equals("")))
+            if (!uploadPath.Equals("") || !replacePath.Equals(""))
             {
 
                 //if the file don't exist create it
@@ -742,6 +477,27 @@ namespace FolderAutoUploader
                 }
             }
             else Print("Nothing to load");
+
+        }
+
+        /// <summary>
+        /// Logger
+        /// </summary>
+        /// <param name="print"></param>
+        public void Print(object print)
+        {
+
+            Invoke(new Action(() =>
+            {
+                try
+                {
+                    loggerInfo.AppendText("[" + DateTime.Now + "] " + print.ToString() + "\n");
+                }
+                catch(Exception e)
+                {
+                    
+                }
+            }));
 
         }
 
@@ -796,12 +552,146 @@ namespace FolderAutoUploader
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            //notify
+            notifyIcon1.Icon = this.Icon;
+            notifyIcon1.ContextMenu = this.ContextMenu;
+            notifyIcon1.Text = "Folder Copy and Replace";
+            notifyIcon1.Visible = true;
 
+            //Fill in the cells for the locations
+            if (_scheduleLocations != null && _scheduleLocations.Count > 0)
+            {
+                foreach (LocationsAdd location in _scheduleLocations)
+                {
+                    checkedListBoxLocations.Items.Add(location.name, location.selected);
+                }
+            }
+
+            //Display the version
+            Print("Version: V0.0.3.2");
         }
 
         private void numericUpDown1_ValueChanged(object sender, EventArgs e)
         {
             _folderLimit = (int)numericUpDown1.Value;
+        }
+
+        private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void groupBox1_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        //Add Button
+        private void button2_Click(object sender, EventArgs e)
+        {
+            AddLocationsForm addLocationsForm = new AddLocationsForm();
+            DialogResult dialogResult = addLocationsForm.ShowDialog();
+
+            //Refresh the list to make all the new changes appear
+            checkedListBoxLocations.Items.Clear();
+
+            //Fill in the cells for the locations
+            if (_scheduleLocations != null && _scheduleLocations.Count > 0)
+            {
+                foreach (LocationsAdd location in _scheduleLocations)
+                {
+                    checkedListBoxLocations.Items.Add(location.name, location.selected);
+                }
+            }
+        }
+
+        //Copy All Selected Button
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            if (checkedListBoxLocations.CheckedItems.Count > 0)
+            {
+                int id = 0;
+
+                foreach (string LocationName in checkedListBoxLocations.CheckedItems)
+                {
+                    LocationsAdd findCheckedLocation = _scheduleLocations.Find(x => x.name.Contains(LocationName));
+                    ProcessHelper copy = new ProcessHelper(this, false, id, findCheckedLocation.copy, findCheckedLocation.replace, overwriteFiles, _folderLimit, progressBar1, progressBar2, folderInfoLabel, fileInfoLabel);
+
+                    id++;
+                }
+
+                //start
+                _processes[0].Start();
+
+                //Debug
+                //Print("Processes: " + _processes.Count.ToString());
+                //foreach (ProcessHelper prcess in _processes)
+                //{
+                //    Print("\n");
+
+                //    prcess.countFiles(prcess.uploadPath);
+
+                //    Print("Process ID: " + prcess.workerID.ToString());
+                //    Print("UploadPath: " + prcess.uploadPath.ToString());
+                //    Print("ReplacePath: " + prcess.replacePath.ToString());
+                //    Print("Amount of files " + prcess.actualFiles);
+
+                //}
+            }
+            else
+            {
+                Print("You have no locations selected");
+            }
+        }
+
+        public void NextProcess()
+        {
+            //0 is the curret process being processed
+            if (_processes.Count > 0)
+            {
+                _processes[0].Start();
+            }
+            else
+            {
+                Print("All done with processes");
+                //_processes.Clear();
+            }
+        }
+
+        //Remove Button
+        private void RemoveButton_Click(object sender, EventArgs e)
+        {
+            //Delete it from the static list
+            foreach (string Location in checkedListBoxLocations.CheckedItems)
+            {
+                //Remove from the actual list too
+                _scheduleLocations.Remove(_scheduleLocations.Find(x => x.name.Contains(Location)));
+            }
+
+            //Get the count
+            int CheckedCount = checkedListBoxLocations.CheckedItems.Count;
+
+            //Delete it from the list UI
+            for (int i = 0; i < CheckedCount; i++)
+            {
+                ((IList)checkedListBoxLocations.Items).Remove(checkedListBoxLocations.CheckedItems[0]);
+            }
+        }
+
+        private void tabPage3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label4_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+        //Get the current selected one?
+        private void checkedListBoxLocations_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 
@@ -809,10 +699,22 @@ namespace FolderAutoUploader
     public class Data
     {
         public List<DateTime> dates;
+        public List<LocationsAdd> scheduleLocations;
         public DateTime dateLastRan;
 
         public bool dailyChecked;
         public bool alreadyRanToday;
         public int folderLimit;
+    }
+
+    [Serializable]
+    public class LocationsAdd
+    {
+        public string name;
+
+        public string copy;
+        public string replace;
+
+        public bool selected;
     }
 }

@@ -24,15 +24,16 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <UpdateUrl>http://localhost/FolderAutoUploader/</UpdateUrl>
-    <ProductName>FolderAutoUpdater</ProductName>
+    <TargetCulture>en</TargetCulture>
+    <ProductName>FolderAutoUploader</ProductName>
     <PublisherName>Ethan</PublisherName>
-    <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationRevision>7</ApplicationRevision>
     <ApplicationVersion>0.0.2.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
-    <BootstrapperEnabled>false</BootstrapperEnabled>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <BootstrapperComponentsUrl>C:\Program Files</BootstrapperComponentsUrl>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -60,13 +61,20 @@
     <ManifestCertificateThumbprint>0B39ABCAC993AD3276076450D520924D1DAF77CC</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>FolderAutoUploader_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>
+    </ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>favicon.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>FolderAutoUploader.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -83,6 +91,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddLocationsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AddLocationsForm.Designer.cs">
+      <DependentUpon>AddLocationsForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="FileSelectionAndDeletion.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -95,6 +109,7 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="ProcessHelper.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="PromptForm.cs">
       <SubType>Form</SubType>
@@ -103,6 +118,9 @@
       <DependentUpon>PromptForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="AddLocationsForm.resx">
+      <DependentUpon>AddLocationsForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FileSelectionAndDeletion.resx">
       <DependentUpon>FileSelectionAndDeletion.cs</DependentUpon>
     </EmbeddedResource>
@@ -120,6 +138,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="FolderAutoUploader_TemporaryKey.pfx" />
     <None Include="Properties\Settings.settings">
@@ -136,9 +155,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
+    <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
       <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4.5.2 %28x86 and x64%29</ProductName>
+      <ProductName>Microsoft .NET Framework 4.7.2 %28x86 and x64%29</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
@@ -146,6 +165,9 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="favicon.ico" />

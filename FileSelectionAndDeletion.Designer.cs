@@ -29,20 +29,25 @@ namespace FolderAutoUploader
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FileSelectionAndDeletionForm));
             this.folderCheckedListBox = new System.Windows.Forms.CheckedListBox();
             this.deleteButton = new System.Windows.Forms.Button();
             this.backButton = new System.Windows.Forms.Button();
             this.statusLabel = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
+            this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
+            this.LastModifedDates = new System.Windows.Forms.RichTextBox();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
             // folderCheckedListBox
             // 
+            this.folderCheckedListBox.CheckOnClick = true;
             this.folderCheckedListBox.FormattingEnabled = true;
             this.folderCheckedListBox.Location = new System.Drawing.Point(68, 57);
             this.folderCheckedListBox.Name = "folderCheckedListBox";
-            this.folderCheckedListBox.Size = new System.Drawing.Size(439, 304);
+            this.folderCheckedListBox.Size = new System.Drawing.Size(292, 304);
             this.folderCheckedListBox.Sorted = true;
             this.folderCheckedListBox.TabIndex = 3;
             // 
@@ -85,11 +90,26 @@ namespace FolderAutoUploader
             this.label1.TabIndex = 7;
             this.label1.Text = "Please select the folders you want to delete";
             // 
+            // bindingSource1
+            // 
+            this.bindingSource1.CurrentChanged += new System.EventHandler(this.bindingSource1_CurrentChanged);
+            // 
+            // LastModifedDates
+            // 
+            this.LastModifedDates.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.LastModifedDates.Location = new System.Drawing.Point(367, 57);
+            this.LastModifedDates.Name = "LastModifedDates";
+            this.LastModifedDates.ReadOnly = true;
+            this.LastModifedDates.Size = new System.Drawing.Size(140, 304);
+            this.LastModifedDates.TabIndex = 8;
+            this.LastModifedDates.Text = "";
+            // 
             // FileSelectionAndDeletionForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(595, 450);
+            this.Controls.Add(this.LastModifedDates);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.statusLabel);
             this.Controls.Add(this.backButton);
@@ -102,6 +122,7 @@ namespace FolderAutoUploader
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "File Selection and Deletion";
             this.Load += new System.EventHandler(this.FileSelectionAndDeletionForm_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -113,5 +134,7 @@ namespace FolderAutoUploader
         private System.Windows.Forms.Button backButton;
         private System.Windows.Forms.Label statusLabel;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.BindingSource bindingSource1;
+        private System.Windows.Forms.RichTextBox LastModifedDates;
     }
 }

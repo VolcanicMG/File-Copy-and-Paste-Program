@@ -1,16 +1,12 @@
 ﻿using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace FolderAutoUploader
 {
     static class Program
     {
-        static RegistryKey key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
-
+        
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -21,13 +17,24 @@ namespace FolderAutoUploader
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());
 
+            //Use a double try/catch to make sure the program does not crash and so we can use the finally statement
             try
             {
-                key.SetValue("Auto_Copy/Paste_Program", "\"" + Application.ExecutablePath + "\"");
+                RegistryKey key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+
+                try
+                {
+
+                    key.SetValue("Auto_Copy/Paste_Program", "\"" + Application.ExecutablePath + "\"");
+                }
+                finally
+                {
+                    key.Dispose();
+                }
             }
-            finally
+            catch (Exception e)
             {
-                key.Dispose();
+
             }
         }
     }

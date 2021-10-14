@@ -1,13 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace FolderAutoUploader
@@ -16,7 +10,10 @@ namespace FolderAutoUploader
     {
         public string _replacePath;
         public List<string> backupFolders = new List<string>();
-        public Form1 _mainForm;
+        public List<string> deleationDates = new List<string>();
+
+        //public Form1 _mainForm;
+        public ProcessHelper process;
 
         public FileSelectionAndDeletionForm()
         {
@@ -25,30 +22,40 @@ namespace FolderAutoUploader
 
         private void FileSelectionAndDeletionForm_Load(object sender, EventArgs e)
         {
+            int number = 1;
+
             CheckFolders();
 
             foreach (string folderPath in backupFolders)
             {
                 folderCheckedListBox.Items.Add(folderPath);
             }
+
+            for (int i = 0; i < deleationDates.Count; i++)
+            {
+                LastModifedDates.Text += deleationDates[i] + "\n";
+            }
         }
 
         void CheckFolders()
         {
             string replaceNewPath = _replacePath;
-           
-            for (int i = 0;  i < 15; i++)
+
+            for (int i = 0; i < Form1._folderLimit; i++) 
             {
                 if (Directory.Exists(replaceNewPath + i))
                 {
                     backupFolders.Add(replaceNewPath + i);
+
+                    DateTime dt = File.GetLastWriteTimeUtc(replaceNewPath + i);
+                    deleationDates.Add(String.Format("{0:M/d/yyyy}", dt)); //get the last time the file was modified
                 }
             }
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            
+
             if (folderCheckedListBox.CheckedItems.Count > 0)
             {
                 statusLabel.Text = "Deleting in progress... (Might take a few minutes depending on folder size)";
@@ -68,15 +75,17 @@ namespace FolderAutoUploader
                         }
                     }
 
-                    Thread.Sleep(1000);
-                    _mainForm.button1_Click();
+                    Thread.Sleep(10);
+                    process.Start();
+
+                    //When the process ends dispose of the popup
                     this.Dispose();
                 }
                 else statusLabel.Text = "";
 
                 promptForm.Dispose();
             }
-            
+
         }
 
         private void DeleteFolder(string path)
@@ -98,8 +107,13 @@ namespace FolderAutoUploader
 
         private void backButton_Click(object sender, EventArgs e)
         {
-            
+
             this.Dispose();
+        }
+
+        private void bindingSource1_CurrentChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
