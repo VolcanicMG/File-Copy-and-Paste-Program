@@ -1,11 +1,10 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Forms;
 
@@ -38,6 +37,10 @@ namespace FolderAutoUploader
         public static List<LocationsAdd> _scheduleLocations;
         public static List<ProcessHelper> _processes;
 
+
+        //Settings
+        public static bool _loadOnStartup;
+
         public Form1()
         {
             InitializeComponent();
@@ -58,7 +61,7 @@ namespace FolderAutoUploader
 
             //Get the path for the dates
             string folderNameDates = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            datesFileLocation = folderNameDates + @"\CopyPasteData\dates.bin";
+            datesFileLocation = folderNameDates + @"\CopyPasteData\dates.bin"; //Need to change to data at some point ********---------------------------------------------------------
 
             //set and reset
             _scheduleLocations = new List<LocationsAdd>();
@@ -93,6 +96,7 @@ namespace FolderAutoUploader
                 _dateLastRan = infoData.dateLastRan;
                 _folderLimit = infoData.folderLimit;
                 _scheduleLocations = infoData.scheduleLocations;
+                _loadOnStartup = infoData.loadOnStartup;
 
                 //Used for the first time or when there is nothing
                 if (_scheduleLocations == null)
@@ -160,7 +164,7 @@ namespace FolderAutoUploader
             //Every minute if the daily is checked then set the timer to check if the day is the right day.
             if (_dailyChecked && !_alreadyRanToday && !workin)
             {
-                timer = new System.Timers.Timer(60000);
+                timer = new System.Timers.Timer(30000);
                 timer.Elapsed += timer_Elapsed;
                 timer.Start();
             }
@@ -188,6 +192,7 @@ namespace FolderAutoUploader
             infoData.dateLastRan = _dateLastRan;
             infoData.folderLimit = _folderLimit;
             infoData.scheduleLocations = _scheduleLocations;
+            infoData.loadOnStartup = _loadOnStartup;
 
             using (FileStream stream = File.OpenWrite(datesFileLocation))
             {
@@ -234,6 +239,8 @@ namespace FolderAutoUploader
 
                 searchButton1.Enabled = on;
                 searchButton2.Enabled = on;
+
+                copySelectedButton.Enabled = on;
             }));
 
         }
@@ -286,34 +293,23 @@ namespace FolderAutoUploader
         public void timer_Elapsed(object sender, ElapsedEventArgs e)
         {
             DateTime now = DateTime.Now;
-            DateTime setTime = new DateTime();
-
             DailyTime = new DateTime(now.Year, now.Month, now.Day, 1, 0, 0, 0);
 
             if (DailyTime <= now && _dailyChecked)
             {
-                //Change the label to running
-                runningLabel.Text = "Running...";
-
-                //Load in the file setting if there are any
-                LoadButton_Click();
-
-                if (File.Exists(saveFileLocation))
+                Invoke(new Action(() =>
                 {
-                    Invoke(new Action(() =>
-                    {
-                        button1_Click(); //Predefine some of the paths for the buttons to respond too (Use the load button)
-                    }));
+                    //Change the label to running
+                    runningLabel.Text = "Running...";
+    
+                    button1_Click_1();
 
                     Print("Starting...");
-                }
-                else
-                {
-                    Print("You need to save something in order for the program to work daily or automatically. Find a coping place and replace path and save them. The next day the program will find it.");
-                }
 
-                _alreadyRanToday = true;
-                _dateLastRan = now;
+                    _alreadyRanToday = true;
+                    _dateLastRan = now;
+
+                }));
             }
 
             timer.Stop();
@@ -420,9 +416,14 @@ namespace FolderAutoUploader
 
         private void overwriteCheckbox_CheckedChanged(object sender, EventArgs e)
         {
+
             overwriteFiles = overwriteCheckbox.Checked;
 
-            //ProcessHelper.Print(overwriteFile.ToString());
+            if(overwriteCheckbox.Checked)
+            {
+                uploadButton.Text = "Overwrite";
+            }
+            else uploadButton.Text = "Copy";
         }
 
         private void loggerClearButton_Click(object sender, EventArgs e)
@@ -493,9 +494,9 @@ namespace FolderAutoUploader
                 {
                     loggerInfo.AppendText("[" + DateTime.Now + "] " + print.ToString() + "\n");
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
-                    
+
                 }
             }));
 
@@ -510,11 +511,9 @@ namespace FolderAutoUploader
         {
             if (workin)
             {
-                Reset();
-
                 workin = false;
 
-                Print("Aborting upload");
+                Print("Canceling");
             }
             else Print("No process is running");
         }
@@ -558,6 +557,10 @@ namespace FolderAutoUploader
             notifyIcon1.Text = "Folder Copy and Replace";
             notifyIcon1.Visible = true;
 
+            cancelButton.Enabled = false;
+
+            windowsStartupCheckBox.Checked = _loadOnStartup;
+
             //Fill in the cells for the locations
             if (_scheduleLocations != null && _scheduleLocations.Count > 0)
             {
@@ -567,8 +570,11 @@ namespace FolderAutoUploader
                 }
             }
 
+            
+
+
             //Display the version
-            Print("Version: V0.0.3.2");
+            Print("Version: V0.0.3.4");
         }
 
         private void numericUpDown1_ValueChanged(object sender, EventArgs e)
@@ -606,9 +612,9 @@ namespace FolderAutoUploader
         }
 
         //Copy All Selected Button
-        private void button1_Click_1(object sender, EventArgs e)
+        private void button1_Click_1(object sender = null, EventArgs e = null)
         {
-            if (checkedListBoxLocations.CheckedItems.Count > 0)
+            if (checkedListBoxLocations.CheckedItems.Count > 0 && !workin)
             {
                 int id = 0;
 
@@ -640,7 +646,7 @@ namespace FolderAutoUploader
             }
             else
             {
-                Print("You have no locations selected");
+                Print("You have no locations selected or set up");
             }
         }
 
@@ -653,8 +659,7 @@ namespace FolderAutoUploader
             }
             else
             {
-                Print("All done with processes");
-                //_processes.Clear();
+                Print("All done with processes"); 
             }
         }
 
@@ -693,6 +698,60 @@ namespace FolderAutoUploader
         {
 
         }
+
+        private void windowsStartupCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            _loadOnStartup = windowsStartupCheckBox.Checked;
+
+            //Check and add the the startup key
+            if (_loadOnStartup)
+            {
+                //Use a double try/catch to make sure the program does not crash and so we can use the finally statement
+                try
+                {
+                    RegistryKey key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+
+                    try
+                    {
+
+                        key.SetValue("Auto_Copy/Paste_Program", "\"" + Application.ExecutablePath + "\"");
+                        key.Close();
+                    }
+                    finally
+                    {
+                        key.Dispose();
+                    }
+                }
+                catch (Exception ee)
+                {
+                    Print(ee);
+                }
+            }
+            else
+            {
+                //Use a double try/catch to make sure the program does not crash and so we can use the finally statement
+                try
+                {
+                    RegistryKey key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+
+                    try
+                    {
+
+                        key.SetValue("Auto_Copy/Paste_Program", "\"" + Application.ExecutablePath + "\"");
+                        key.DeleteValue("Auto_Copy/Paste_Program", false);
+                        key.Close();
+                    }
+                    finally
+                    {
+                        key.Dispose();
+                    }
+                }
+                catch (Exception ee)
+                {
+                    Print(ee);
+                }
+            }
+        }
     }
 
     [Serializable]
@@ -705,6 +764,8 @@ namespace FolderAutoUploader
         public bool dailyChecked;
         public bool alreadyRanToday;
         public int folderLimit;
+
+        public bool loadOnStartup;
     }
 
     [Serializable]

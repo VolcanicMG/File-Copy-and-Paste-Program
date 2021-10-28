@@ -16,26 +16,6 @@ namespace FolderAutoUploader
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());
-
-            //Use a double try/catch to make sure the program does not crash and so we can use the finally statement
-            try
-            {
-                RegistryKey key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
-
-                try
-                {
-
-                    key.SetValue("Auto_Copy/Paste_Program", "\"" + Application.ExecutablePath + "\"");
-                }
-                finally
-                {
-                    key.Dispose();
-                }
-            }
-            catch (Exception e)
-            {
-
-            }
         }
     }
 }

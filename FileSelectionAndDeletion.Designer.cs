@@ -1,4 +1,6 @@
 ﻿
+using System;
+
 namespace FolderAutoUploader
 {
     partial class FileSelectionAndDeletionForm
@@ -18,7 +20,11 @@ namespace FolderAutoUploader
             {
                 components.Dispose();
             }
-            base.Dispose(disposing);
+
+            Invoke(new Action(() =>
+            {
+                base.Dispose(disposing);
+            }));
         }
 
         #region Windows Form Designer generated code
@@ -38,6 +44,8 @@ namespace FolderAutoUploader
             this.label1 = new System.Windows.Forms.Label();
             this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
             this.LastModifedDates = new System.Windows.Forms.RichTextBox();
+            this.LastestDate = new System.Windows.Forms.Label();
+            this.deletionProgressBar = new System.Windows.Forms.ProgressBar();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -54,9 +62,9 @@ namespace FolderAutoUploader
             // deleteButton
             // 
             this.deleteButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.deleteButton.Location = new System.Drawing.Point(203, 367);
+            this.deleteButton.Location = new System.Drawing.Point(131, 367);
             this.deleteButton.Name = "deleteButton";
-            this.deleteButton.Size = new System.Drawing.Size(157, 48);
+            this.deleteButton.Size = new System.Drawing.Size(157, 30);
             this.deleteButton.TabIndex = 4;
             this.deleteButton.Text = "Delete";
             this.deleteButton.UseVisualStyleBackColor = true;
@@ -74,9 +82,9 @@ namespace FolderAutoUploader
             // 
             // statusLabel
             // 
-            this.statusLabel.Location = new System.Drawing.Point(68, 418);
+            this.statusLabel.Location = new System.Drawing.Point(65, 400);
             this.statusLabel.Name = "statusLabel";
-            this.statusLabel.Size = new System.Drawing.Size(439, 23);
+            this.statusLabel.Size = new System.Drawing.Size(439, 18);
             this.statusLabel.TabIndex = 6;
             this.statusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
@@ -104,11 +112,32 @@ namespace FolderAutoUploader
             this.LastModifedDates.TabIndex = 8;
             this.LastModifedDates.Text = "";
             // 
+            // LastestDate
+            // 
+            this.LastestDate.AutoSize = true;
+            this.LastestDate.Location = new System.Drawing.Point(367, 368);
+            this.LastestDate.Name = "LastestDate";
+            this.LastestDate.Size = new System.Drawing.Size(73, 13);
+            this.LastestDate.TabIndex = 9;
+            this.LastestDate.Text = "Lastest Date: ";
+            this.LastestDate.Click += new System.EventHandler(this.label2_Click);
+            // 
+            // deletionProgressBar
+            // 
+            this.deletionProgressBar.Location = new System.Drawing.Point(68, 421);
+            this.deletionProgressBar.Name = "deletionProgressBar";
+            this.deletionProgressBar.Size = new System.Drawing.Size(436, 17);
+            this.deletionProgressBar.TabIndex = 10;
+            this.deletionProgressBar.Visible = false;
+            // 
             // FileSelectionAndDeletionForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(595, 450);
+            this.ControlBox = false;
+            this.Controls.Add(this.deletionProgressBar);
+            this.Controls.Add(this.LastestDate);
             this.Controls.Add(this.LastModifedDates);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.statusLabel);
@@ -136,5 +165,7 @@ namespace FolderAutoUploader
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.BindingSource bindingSource1;
         private System.Windows.Forms.RichTextBox LastModifedDates;
+        private System.Windows.Forms.Label LastestDate;
+        private System.Windows.Forms.ProgressBar deletionProgressBar;
     }
 }

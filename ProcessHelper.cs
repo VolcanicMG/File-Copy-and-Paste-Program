@@ -14,6 +14,8 @@ namespace FolderAutoUploader
         public string uploadPath;
         public string replacePath;
 
+        private string newReplacePath;
+
         //Options
         public bool overwriteFiles;
 
@@ -76,8 +78,9 @@ namespace FolderAutoUploader
             if (dialogResult == DialogResult.OK)
             {
                 FileSelectionAndDeletionForm FLADF = new FileSelectionAndDeletionForm();
-                FLADF._replacePath = replacePath;
+                FLADF._replacePath = newReplacePath; //Needs to use the new replace path so it gets the dir ex. home/so (We select home but we need to get into so)
                 FLADF.process = this;
+                FLADF._mainForm = mainForm;
                 FLADF.Show();
             }
             else
@@ -100,7 +103,13 @@ namespace FolderAutoUploader
             string newPath = "";
             int folders;
 
-            string replaceNewPath = replacePath;
+            if (!uploadPath.Equals("") && uploadPath != null)
+            {
+                DirectoryInfo di = new DirectoryInfo(uploadPath);
+                newReplacePath = replacePath + @"\" + di.Name;
+            }
+
+            string replaceNewPath = newReplacePath;
 
             //Reset the progress bar
             mainForm.Invoke(new Action(() =>
@@ -117,11 +126,12 @@ namespace FolderAutoUploader
             mainForm.Print($"Upload Path: {uploadPath}");
             mainForm.Print($"Replace Path: {replacePath}");
 
+
             //Check to make sure both paths exist
             if (CheckDirectory(uploadPath) && CheckDirectory(replacePath) && Form1.workin)
             {
                 //Count the amount of files
-                countFiles(uploadPath);
+                actualFiles = countFiles(uploadPath, mainForm);
 
                 mainForm.Invoke(new Action(() =>
                 {
@@ -169,32 +179,51 @@ namespace FolderAutoUploader
                 }
                 else
                 {
-                    mainForm.Print("Deleting folder");
 
-                    //Delete and create a fresh folder
-                    DirectoryInfo dir = new DirectoryInfo(replacePath);
+                    //Create prompt asking for deletion
+                    PromptForm promptForm = new PromptForm();
+                    promptForm.text = "Are you sure you want to overwrite the folder? (Will delete and replace the folder)";
+                    DialogResult dialogResult = promptForm.ShowDialog();
 
-                    foreach (FileInfo file in dir.GetFiles())
+                    if (dialogResult == DialogResult.OK)
                     {
-                        file.Delete();
+                        mainForm.Print("Deleting folder");
+
+                        //Delete and create a fresh folder
+                        DirectoryInfo dir = new DirectoryInfo(replacePath);
+
+                        foreach (FileInfo file in dir.GetFiles())
+                        {
+                            file.Delete();
+                        }
+                        foreach (DirectoryInfo dirs in dir.GetDirectories())
+                        {
+                            dirs.Delete(true);
+                        }
+
+                        mainForm.Print("Deleting complete");
+
+                        //overwrite and create new folders
+                        Directory.Delete(replacePath);
+
+                        Directory.CreateDirectory(replacePath);
+
+                        ConvergeFiles(uploadPath, replacePath);
+
+                        //start the thread for the application
+                        workerThread = new Thread(() => ConvergeFiles(uploadPath, replacePath));
+                        workerThread.Start();
                     }
-                    foreach (DirectoryInfo dirs in dir.GetDirectories())
+                    else
+
                     {
-                        dirs.Delete(true);
+                        mainForm.Reset();
+                        return;
                     }
 
-                    mainForm.Print("Deleting complete");
+                    promptForm.Dispose();
 
-                    //overwrite and create new folders
-                    Directory.Delete(replacePath);
-
-                    Directory.CreateDirectory(replacePath);
-
-                    ConvergeFiles(uploadPath, replacePath);
-
-                    //start the thread for the application
-                    workerThread = new Thread(() => ConvergeFiles(uploadPath, replacePath));
-                    workerThread.Start();
+                    
                 }
 
             }
@@ -218,6 +247,11 @@ namespace FolderAutoUploader
         /// <param name="replace"></param>
         private void ConvergeFiles(string upload, string replace)
         {
+            mainForm.Invoke(new Action(() =>
+            {
+                mainForm.cancelButton.Enabled = true;
+            }));
+
             if (CheckDirectory(replace) && CheckDirectory(upload) && Form1.workin)
             {
                 mainForm.Invoke(new Action(() =>
@@ -268,15 +302,27 @@ namespace FolderAutoUploader
                     }));
 
                     actualFiles--;
+                    
+                    //Used to make sure the last file is done when canceled it pressed
+                    if (!Form1.workin)
+                    {
+                        mainForm.Reset();
+
+                        return;
+                    }
                 }
 
                 //sub folders
                 foreach (DirectoryInfo subdir in dirs)
                 {
-                    string tempPath = Path.Combine(replace, subdir.Name);
-                    Directory.CreateDirectory(tempPath);
+                    if (Form1.workin)
+                    {
+                        string tempPath = Path.Combine(replace, subdir.Name);
+                        Directory.CreateDirectory(tempPath);
 
-                    ConvergeFiles(subdir.FullName, tempPath);
+                        ConvergeFiles(subdir.FullName, tempPath);
+                    }
+                    else return;
                 }
 
                 mainForm.Invoke(new Action(() =>
@@ -323,8 +369,10 @@ namespace FolderAutoUploader
         ///Used to count all the files in a directory including those within sub directories
         /// </summary>
         /// <param name="uploadLoc">The path used to find the directory</param>
-        public void countFiles(string uploadLoc)
+        public static int countFiles(string uploadLoc, Form1 mainForm)
         {
+            int totalFiles = 0;
+
             if (CheckDirectory(uploadLoc))
             {
 
@@ -335,7 +383,7 @@ namespace FolderAutoUploader
                 //Copy over all the files
                 foreach (FileInfo file in files)
                 {
-                    actualFiles++;
+                    totalFiles++;
                 }
 
                 //sub folders
@@ -343,16 +391,17 @@ namespace FolderAutoUploader
                 {
                     string tempPath = Path.Combine(uploadLoc, subdir.Name);
 
-                    countFiles(subdir.FullName);
+                    totalFiles += countFiles(subdir.FullName, mainForm);
                 }
 
+                return totalFiles;
             }
             else
             {
-
                 mainForm.Print("Error - not found");
                 mainForm.Print(CheckDirectory(uploadLoc).ToString() + "-" + " uploadLoc");
 
+                return 0;
             }
         }
 

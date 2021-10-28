@@ -71,10 +71,13 @@ namespace FolderAutoUploader
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.label4 = new System.Windows.Forms.Label();
             this.checkedListBoxLocations = new System.Windows.Forms.CheckedListBox();
-            this.CopySelectedButton = new System.Windows.Forms.Button();
+            this.copySelectedButton = new System.Windows.Forms.Button();
             this.AddButton = new System.Windows.Forms.Button();
             this.RemoveButton = new System.Windows.Forms.Button();
             this.runningLabel = new System.Windows.Forms.Label();
+            this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.settingsLabel = new System.Windows.Forms.Label();
+            this.windowsStartupCheckBox = new System.Windows.Forms.CheckBox();
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.groupBox1.SuspendLayout();
@@ -85,6 +88,7 @@ namespace FolderAutoUploader
             this.tabPage2.SuspendLayout();
             this.tabPage3.SuspendLayout();
             this.groupBox3.SuspendLayout();
+            this.tabPage4.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -408,6 +412,7 @@ namespace FolderAutoUploader
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage3);
+            this.tabControl1.Controls.Add(this.tabPage4);
             this.tabControl1.Location = new System.Drawing.Point(12, 12);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -470,7 +475,7 @@ namespace FolderAutoUploader
             // 
             this.groupBox3.Controls.Add(this.label4);
             this.groupBox3.Controls.Add(this.checkedListBoxLocations);
-            this.groupBox3.Controls.Add(this.CopySelectedButton);
+            this.groupBox3.Controls.Add(this.copySelectedButton);
             this.groupBox3.Controls.Add(this.AddButton);
             this.groupBox3.Controls.Add(this.RemoveButton);
             this.groupBox3.Location = new System.Drawing.Point(3, 0);
@@ -499,15 +504,15 @@ namespace FolderAutoUploader
             this.checkedListBoxLocations.TabIndex = 4;
             this.checkedListBoxLocations.SelectedIndexChanged += new System.EventHandler(this.checkedListBoxLocations_SelectedIndexChanged);
             // 
-            // CopySelectedButton
+            // copySelectedButton
             // 
-            this.CopySelectedButton.Location = new System.Drawing.Point(129, 298);
-            this.CopySelectedButton.Name = "CopySelectedButton";
-            this.CopySelectedButton.Size = new System.Drawing.Size(236, 39);
-            this.CopySelectedButton.TabIndex = 0;
-            this.CopySelectedButton.Text = "Copy Selected";
-            this.CopySelectedButton.UseVisualStyleBackColor = true;
-            this.CopySelectedButton.Click += new System.EventHandler(this.button1_Click_1);
+            this.copySelectedButton.Location = new System.Drawing.Point(129, 298);
+            this.copySelectedButton.Name = "copySelectedButton";
+            this.copySelectedButton.Size = new System.Drawing.Size(236, 39);
+            this.copySelectedButton.TabIndex = 0;
+            this.copySelectedButton.Text = "Copy Selected";
+            this.copySelectedButton.UseVisualStyleBackColor = true;
+            this.copySelectedButton.Click += new System.EventHandler(this.button1_Click_1);
             // 
             // AddButton
             // 
@@ -541,6 +546,43 @@ namespace FolderAutoUploader
             this.runningLabel.TabIndex = 29;
             this.runningLabel.Text = " ";
             this.runningLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // tabPage4
+            // 
+            this.tabPage4.Controls.Add(this.settingsLabel);
+            this.tabPage4.Controls.Add(this.windowsStartupCheckBox);
+            this.tabPage4.Location = new System.Drawing.Point(4, 22);
+            this.tabPage4.Name = "tabPage4";
+            this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage4.Size = new System.Drawing.Size(523, 355);
+            this.tabPage4.TabIndex = 3;
+            this.tabPage4.Text = "Settings";
+            this.tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // settingsLabel
+            // 
+            this.settingsLabel.AutoSize = true;
+            this.settingsLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.settingsLabel.Location = new System.Drawing.Point(186, 21);
+            this.settingsLabel.Name = "settingsLabel";
+            this.settingsLabel.Size = new System.Drawing.Size(140, 37);
+            this.settingsLabel.TabIndex = 1;
+            this.settingsLabel.Text = "Settings";
+            this.settingsLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // windowsStartupCheckBox
+            // 
+            this.windowsStartupCheckBox.AutoSize = true;
+            this.windowsStartupCheckBox.Checked = true;
+            this.windowsStartupCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.windowsStartupCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.windowsStartupCheckBox.Location = new System.Drawing.Point(184, 70);
+            this.windowsStartupCheckBox.Name = "windowsStartupCheckBox";
+            this.windowsStartupCheckBox.Size = new System.Drawing.Size(142, 24);
+            this.windowsStartupCheckBox.TabIndex = 0;
+            this.windowsStartupCheckBox.Text = "Start on Startup";
+            this.windowsStartupCheckBox.UseVisualStyleBackColor = true;
+            this.windowsStartupCheckBox.CheckedChanged += new System.EventHandler(this.windowsStartupCheckBox_CheckedChanged);
             // 
             // notifyIcon1
             // 
@@ -589,6 +631,8 @@ namespace FolderAutoUploader
             this.tabPage3.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
+            this.tabPage4.ResumeLayout(false);
+            this.tabPage4.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
             this.ResumeLayout(false);
@@ -607,7 +651,6 @@ namespace FolderAutoUploader
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.DateTimePicker dateTimePicker;
         private System.Windows.Forms.Button datePickerButton;
-        private System.Windows.Forms.RichTextBox loggerInfo;
         private System.Windows.Forms.RichTextBox dateTextBox;
         private System.Windows.Forms.Label dateAndTimesText;
         private System.Windows.Forms.Label pickDateText;
@@ -622,7 +665,6 @@ namespace FolderAutoUploader
         private System.Windows.Forms.Button LoadButton;
         private System.Windows.Forms.Label fileInfoLabel;
         private System.Windows.Forms.Label folderInfoLabel;
-        private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.ProgressBar progressBar2;
         private System.Windows.Forms.CheckBox dailyCheckBox;
         private System.Windows.Forms.Button clearDatesButton;
@@ -636,13 +678,18 @@ namespace FolderAutoUploader
         private System.Windows.Forms.NotifyIcon notifyIcon1;
         private System.Windows.Forms.Label runningLabel;
         private System.Windows.Forms.TabPage tabPage3;
-        private System.Windows.Forms.Button CopySelectedButton;
+        private System.Windows.Forms.Button copySelectedButton;
         private System.Windows.Forms.Button AddButton;
         private System.Windows.Forms.Button RemoveButton;
         private System.Windows.Forms.CheckedListBox checkedListBoxLocations;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.Label label4;
+        public System.Windows.Forms.RichTextBox loggerInfo;
+        public System.Windows.Forms.Button cancelButton;
+        private System.Windows.Forms.TabPage tabPage4;
+        private System.Windows.Forms.Label settingsLabel;
+        private System.Windows.Forms.CheckBox windowsStartupCheckBox;
     }
 }
 
