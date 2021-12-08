@@ -1,0 +1,12 @@
+C:\Users\ethan\source\repos\FolderAutoUploader\FolderAutoUpdaterBackgroundProcess\obj\Debug\FolderAutoUpdaterBackgroundProcess.BackgroundProcess.resources
+C:\Users\ethan\source\repos\FolderAutoUploader\FolderAutoUpdaterBackgroundProcess\obj\Debug\FolderAutoUpdaterBackgroundProcess.Properties.Resources.resources
+C:\Users\ethan\source\repos\FolderAutoUploader\FolderAutoUpdaterBackgroundProcess\obj\Debug\FolderAutoUpdaterBackgroundProcess.csproj.GenerateResource.cache
+C:\Users\ethan\source\repos\FolderAutoUploader\FolderAutoUpdaterBackgroundProcess\obj\Debug\FolderAutoUpdaterBackgroundProcess.csproj.CoreCompileInputs.cache
+C:\Users\ethan\source\repos\FolderAutoUploader\FolderAutoUploaderMain\bin\Debug\FolderAutoUpdaterBackgroundProcess.exe.config
+C:\Users\ethan\source\repos\FolderAutoUploader\FolderAutoUploaderMain\bin\Debug\FolderAutoUpdaterBackgroundProcess.exe
+C:\Users\ethan\source\repos\FolderAutoUploader\FolderAutoUploaderMain\bin\Debug\FolderAutoUpdaterBackgroundProcess.pdb
+C:\Users\ethan\source\repos\FolderAutoUploader\FolderAutoUpdaterBackgroundProcess\obj\Debug\FolderAutoUpdaterBackgroundProcess.csproj.CopyComplete
+C:\Users\ethan\source\repos\FolderAutoUploader\FolderAutoUpdaterBackgroundProcess\obj\Debug\FolderAutoUpdaterBackgroundProcess.exe
+C:\Users\ethan\source\repos\FolderAutoUploader\FolderAutoUpdaterBackgroundProcess\obj\Debug\FolderAutoUpdaterBackgroundProcess.pdb
+C:\Users\ethan\source\repos\FolderAutoUploader\FolderAutoUpdaterBackgroundProcess\obj\Debug\FolderAutoUpdaterBackgroundProcess.csproj.AssemblyReference.cache
+C:\Users\ethan\source\repos\FolderAutoUploader\FolderAutoUpdaterBackgroundProcess\obj\Debug\FolderAutoUpdaterBackgroundProcess.csproj.SuggestedBindingRedirects.cache

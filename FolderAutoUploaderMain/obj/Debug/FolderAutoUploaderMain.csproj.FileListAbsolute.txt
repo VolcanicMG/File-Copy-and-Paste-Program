@@ -1,0 +1,8 @@
+C:\Users\ethan\source\repos\FolderAutoUploader\FolderAutoUploaderMain\bin\Debug\FolderAutoUploaderMain.pdb
+C:\Users\ethan\source\repos\FolderAutoUploader\FolderAutoUploaderMain\obj\Debug\FolderAutoUploaderMain.Properties.Resources.resources
+C:\Users\ethan\source\repos\FolderAutoUploader\FolderAutoUploaderMain\obj\Debug\FolderAutoUploaderMain.csproj.GenerateResource.cache
+C:\Users\ethan\source\repos\FolderAutoUploader\FolderAutoUploaderMain\obj\Debug\FolderAutoUploaderMain.csproj.CoreCompileInputs.cache
+C:\Users\ethan\source\repos\FolderAutoUploader\FolderAutoUploaderMain\obj\Debug\FolderAutoUploaderMain.pdb
+C:\Users\ethan\source\repos\FolderAutoUploader\FolderAutoUploaderMain\bin\Debug\FolderAutoUploaderMain.dll.config
+C:\Users\ethan\source\repos\FolderAutoUploader\FolderAutoUploaderMain\bin\Debug\FolderAutoUploaderMain.dll
+C:\Users\ethan\source\repos\FolderAutoUploader\FolderAutoUploaderMain\obj\Debug\FolderAutoUploaderMain.dll

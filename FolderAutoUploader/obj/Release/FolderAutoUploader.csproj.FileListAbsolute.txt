@@ -1,0 +1,16 @@
+C:\Users\Ethan\source\repos\FolderAutoUploader\FolderAutoUploader\bin\Release\FolderAutoUploader.exe.config
+C:\Users\Ethan\source\repos\FolderAutoUploader\FolderAutoUploader\bin\Release\FolderAutoUploader.exe.manifest
+C:\Users\Ethan\source\repos\FolderAutoUploader\FolderAutoUploader\bin\Release\FolderAutoUploader.application
+C:\Users\Ethan\source\repos\FolderAutoUploader\FolderAutoUploader\bin\Release\FolderAutoUploader.exe
+C:\Users\Ethan\source\repos\FolderAutoUploader\FolderAutoUploader\bin\Release\FolderAutoUploader.pdb
+C:\Users\Ethan\source\repos\FolderAutoUploader\FolderAutoUploader\obj\Release\FolderAutoUploader.FileSelectionAndDeletionForm.resources
+C:\Users\Ethan\source\repos\FolderAutoUploader\FolderAutoUploader\obj\Release\FolderAutoUploader.Form1.resources
+C:\Users\Ethan\source\repos\FolderAutoUploader\FolderAutoUploader\obj\Release\FolderAutoUploader.PromptForm.resources
+C:\Users\Ethan\source\repos\FolderAutoUploader\FolderAutoUploader\obj\Release\FolderAutoUploader.Properties.Resources.resources
+C:\Users\Ethan\source\repos\FolderAutoUploader\FolderAutoUploader\obj\Release\FolderAutoUploader.csproj.GenerateResource.cache
+C:\Users\Ethan\source\repos\FolderAutoUploader\FolderAutoUploader\obj\Release\FolderAutoUploader.csproj.CoreCompileInputs.cache
+C:\Users\Ethan\source\repos\FolderAutoUploader\FolderAutoUploader\obj\Release\FolderAutoUploader.exe.manifest
+C:\Users\Ethan\source\repos\FolderAutoUploader\FolderAutoUploader\obj\Release\FolderAutoUploader.application
+C:\Users\Ethan\source\repos\FolderAutoUploader\FolderAutoUploader\obj\Release\FolderAutoUploader.exe
+C:\Users\Ethan\source\repos\FolderAutoUploader\FolderAutoUploader\obj\Release\FolderAutoUploader.pdb
+C:\Users\Ethan\source\repos\FolderAutoUploader\FolderAutoUploader\obj\Release\FolderAutoUploader.csprojAssemblyReference.cache
