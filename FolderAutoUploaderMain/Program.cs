@@ -58,7 +58,7 @@ namespace FolderAutoUploaderMain
         public bool runFromBackground;
 
         public checkCycle checktype;
-
+        
         public enum checkCycle
         { 
             notChecked,

@@ -14,6 +14,8 @@ namespace FolderAutoUpdaterBackgroundProcess
     {
         private Data infoData;
 
+        private DateTime dailyTime;
+
         //Icon menu
         private ContextMenu trayMenu;
 
@@ -42,6 +44,8 @@ namespace FolderAutoUpdaterBackgroundProcess
         public bool _loadOnStartup;
         public bool _runFromBackground;
 
+        
+
         public BackgroundProcess()
         {
             InitializeComponent();
@@ -51,7 +55,6 @@ namespace FolderAutoUpdaterBackgroundProcess
         {
             Visible = false;
             ShowInTaskbar = false;
-
 
             // Load in the dates file and check it
             if (File.Exists(Info.datesFileLocation))
@@ -83,8 +86,10 @@ namespace FolderAutoUpdaterBackgroundProcess
             trayIcon.ContextMenu = trayMenu;
             trayIcon.Visible = true;
 
-            StartTimer();
+            //Set the day
+            dailyTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 1, 0, 0, 0); //Todays date but at 1am
 
+            StartTimer();
         }
 
         private void TrayIcon_Click(object sender, EventArgs e)
@@ -111,6 +116,8 @@ namespace FolderAutoUpdaterBackgroundProcess
             BinaryFormatter formatter = new BinaryFormatter();
 
             infoData.dates = dates;
+            infoData.weeklyTime = _weeklyTime;
+            infoData.monthlyTime = _monthlyTime;
 
             using (FileStream stream = File.OpenWrite(Info.datesFileLocation))
             {
@@ -142,14 +149,14 @@ namespace FolderAutoUpdaterBackgroundProcess
         private void Timer_Tick(object sender, EventArgs e)
         {
             DateTime now = DateTime.Now; //The date and time for right now
-            DateTime dailyTime = new DateTime(now.Year, now.Month, now.Day, 1, 0, 0, 0); //Todays date but at 1am
 
             switch (_checkType)
             {
                 case Data.checkCycle.dailyChecked:
-                    if (dailyTime <= now) 
+                    if (dailyTime <= now && !_alreadyRanToday) //Need some kind of check also for each day
                     {
                         RunPopup();
+                        dailyTime.AddDays(1);
                     }
                     break;
 
@@ -157,6 +164,7 @@ namespace FolderAutoUpdaterBackgroundProcess
                     if (_weeklyTime <= now && !_alreadyRanThisWeek) 
                     {
                         RunPopup();
+                        _weeklyTime.AddDays(7);
                     }
                     break;
 
@@ -164,6 +172,7 @@ namespace FolderAutoUpdaterBackgroundProcess
                     if (_monthlyTime <= now && !_alreadyRanThisMonth) 
                     {
                         RunPopup();
+                        _monthlyTime.AddMonths(1);
                     }
                     break;
 

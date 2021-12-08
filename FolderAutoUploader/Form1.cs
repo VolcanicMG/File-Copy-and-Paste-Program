@@ -327,28 +327,6 @@ namespace FolderAutoUploader
 
                 Print("Starting...");
 
-                //After running add time to the weekly and monthly timer
-                switch (_checkType)
-                {
-                    case Data.checkCycle.notChecked:
-
-                        break;
-
-                    case Data.checkCycle.dailyChecked:
-                        _alreadyRanToday = true;
-                        break;
-
-                    case Data.checkCycle.weeklyChecked:
-                        _alreadyRanThisWeek = true;
-                        _weeklyTime = DailyTime.AddDays(7);
-                        break;
-
-                    case Data.checkCycle.monthlyChecked:
-                        _alreadyRanThisMonth = true;
-                        _monthlyTime = DailyTime.AddMonths(1);
-                        break;
-                }
-
                 _dateLastRan = now;
 
             }));
@@ -677,6 +655,31 @@ namespace FolderAutoUploader
             }
             else
             {
+                DateTime now = DateTime.Now;
+                DateTime DailyTime = new DateTime(now.Year, now.Month, now.Day, 1, 0, 0, 0);
+
+                //After running add time to the weekly and monthly timer
+                switch (_checkType)
+                {
+                    case Data.checkCycle.notChecked:
+
+                        break;
+
+                    case Data.checkCycle.dailyChecked:
+                        _alreadyRanToday = true;
+                        break;
+
+                    case Data.checkCycle.weeklyChecked:
+                        _alreadyRanThisWeek = true;
+                        _weeklyTime = DailyTime.AddDays(7);
+                        break;
+
+                    case Data.checkCycle.monthlyChecked:
+                        _alreadyRanThisMonth = true;
+                        _monthlyTime = DailyTime.AddMonths(1);
+                        break;
+                }
+
                 Print("All done with processes");
             }
         }

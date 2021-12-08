@@ -18,10 +18,10 @@ C:\Users\ethan\source\repos\FolderAutoUploader\FolderAutoUploader\bin\Debug\Micr
 C:\Users\ethan\source\repos\FolderAutoUploader\FolderAutoUploader\bin\Debug\Microsoft.Toolkit.Uwp.Notifications.pdb
 C:\Users\ethan\source\repos\FolderAutoUploader\FolderAutoUploader\bin\Debug\System.ValueTuple.dll
 C:\Users\ethan\source\repos\FolderAutoUploader\FolderAutoUploader\obj\Debug\FolderAutoUploader.csproj.CopyComplete
-C:\Users\ethan\source\repos\FolderAutoUploader\FolderAutoUploader\obj\Debug\FolderAutoUploader.csproj.AssemblyReference.cache
 C:\Users\ethan\source\repos\FolderAutoUploader\FolderAutoUploaderMain\bin\Debug\FolderAutoUploader.exe.config
 C:\Users\ethan\source\repos\FolderAutoUploader\FolderAutoUploaderMain\bin\Debug\FolderAutoUploader.exe.manifest
 C:\Users\ethan\source\repos\FolderAutoUploader\FolderAutoUploaderMain\bin\Debug\FolderAutoUploader.application
 C:\Users\ethan\source\repos\FolderAutoUploader\FolderAutoUploaderMain\bin\Debug\FolderAutoUploader.exe
 C:\Users\ethan\source\repos\FolderAutoUploader\FolderAutoUploaderMain\bin\Debug\FolderAutoUploader.pdb
 C:\Users\ethan\source\repos\FolderAutoUploader\FolderAutoUploader\obj\Debug\FolderAutoUploader.csproj.SuggestedBindingRedirects.cache
+C:\Users\ethan\source\repos\FolderAutoUploader\FolderAutoUploader\obj\Debug\FolderAutoUploader.csproj.AssemblyReference.cache

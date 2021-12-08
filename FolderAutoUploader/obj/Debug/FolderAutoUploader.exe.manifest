@@ -4,7 +4,7 @@
   <description asmv2:iconFile="favicon.ico" xmlns="urn:schemas-microsoft-com:asm.v1" />
   <application />
   <entryPoint>
-    <assemblyIdentity name="FolderAutoUploader" version="0.0.3.5" language="neutral" processorArchitecture="msil" />
+    <assemblyIdentity name="FolderAutoUploader" version="0.0.4.1" language="neutral" processorArchitecture="msil" />
     <commandLine file="FolderAutoUploader.exe" parameters="" />
   </entryPoint>
   <trustInfo>
@@ -44,13 +44,13 @@
   </dependency>
   <dependency>
     <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="FolderAutoUploader.exe" size="129536">
-      <assemblyIdentity name="FolderAutoUploader" version="0.0.3.5" language="neutral" processorArchitecture="msil" />
+      <assemblyIdentity name="FolderAutoUploader" version="0.0.4.1" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>4y9jtVxeanNhnb3rKeHSSl68tD1JimgwTb5qIf9oKuA=</dsig:DigestValue>
+        <dsig:DigestValue>9K8gcZ9vE3zCuYd0TPyA2SPVW02RH60TFPgelIZMW4w=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -62,7 +62,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>hdJ/N7e9KF1dBUmkwVdEk+eEBSpGlJKnLhV8lLCL1Aw=</dsig:DigestValue>
+        <dsig:DigestValue>8EG8GE1jZUTe6/91zkaONmuijGNw/pxCTOohY8B8+Bg=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
