@@ -21,8 +21,9 @@ namespace FolderAutoUploader
         public bool _alreadyRanThisWeek;
         public bool _alreadyRanThisMonth;
 
-        public DateTime _weeklyTime;
-        public DateTime _monthlyTime;
+        private DateTime _dailyTime;
+        private DateTime _weeklyTime;
+        private DateTime _monthlyTime;
 
         public string uploadPath;
         public string replacePath;
@@ -97,6 +98,7 @@ namespace FolderAutoUploader
                 _scheduleLocations = infoData.scheduleLocations;
                 _loadOnStartup = infoData.loadOnStartup;
                 _runFromBackground = infoData.runFromBackground;
+                _dailyTime = infoData.dailyTime;
 
                 //Used for the first time or when there is nothing
                 if (_scheduleLocations == null)
@@ -124,7 +126,7 @@ namespace FolderAutoUploader
             //Check and see if the program already ran today and if not set it to false
             if (_alreadyRanToday)
             {
-                if (_dateLastRan != today && _dateLastRan != DateTime.MinValue)
+                if (_dateLastRan <= today && _dateLastRan != DateTime.MinValue)
                 {
                     _alreadyRanToday = false;
                 }
@@ -146,32 +148,62 @@ namespace FolderAutoUploader
                 }
             }
 
-            //Load with the correct buttons checked
+            Debug.WriteLine("Loaded in daily time: " + _dailyTime);
+
+            //Load with the correct buttons checked and cycle settings
             switch (_checkType)
             { 
                 case Data.checkCycle.dailyChecked:
                     dailyRadioButton.Checked = true;
                     datePickerButton.Enabled = false;
                     dateTimePicker.Enabled = false;
+
+                    if(_dailyTime == null)
+                    {
+                        _dailyTime = DateTime.Now.AddDays(1);
+                    }
                     break;
 
                 case Data.checkCycle.weeklyChecked:
                     weeklyRadioButton.Checked = true;
                     datePickerButton.Enabled = false;
                     dateTimePicker.Enabled = false;
+
+                    if (_weeklyTime == null)
+                    {
+                        _weeklyTime = today.AddDays(7);
+                    }
                     break;
 
                 case Data.checkCycle.monthlyChecked:
                     monthlyRadioButton.Checked = true;
                     datePickerButton.Enabled = false;
                     dateTimePicker.Enabled = false;
+
+                    if (_monthlyTime == null)
+                    {
+                        _monthlyTime = today.AddMonths(1);
+                    }
                     break;
 
                 case Data.checkCycle.notChecked:
                     noneRadioButton.Checked = true;
+
+                    _dailyTime = DateTime.Now;
+                    _weeklyTime = DateTime.Now;
+                    _monthlyTime = DateTime.Now;
+                    break;
+
+                default:
+                    noneRadioButton.Checked = true;
+
+                    _dailyTime = DateTime.Now;
+                    _weeklyTime = DateTime.Now;
+                    _monthlyTime = DateTime.Now;
                     break;
             }
 
+            Debug.WriteLine("Daily Time start: " + _dailyTime);
 
             //Load in the dates that are already selected
             foreach (DateTime date in dates)
@@ -215,6 +247,7 @@ namespace FolderAutoUploader
             infoData.scheduleLocations = _scheduleLocations;
             infoData.loadOnStartup = _loadOnStartup;
             infoData.runFromBackground = _runFromBackground;
+            infoData.dailyTime = _dailyTime;
 
             using (FileStream stream = File.OpenWrite(Info.datesFileLocation))
             {
@@ -655,9 +688,6 @@ namespace FolderAutoUploader
             }
             else
             {
-                DateTime now = DateTime.Now;
-                DateTime DailyTime = new DateTime(now.Year, now.Month, now.Day, 1, 0, 0, 0);
-
                 //After running add time to the weekly and monthly timer
                 switch (_checkType)
                 {
@@ -671,12 +701,12 @@ namespace FolderAutoUploader
 
                     case Data.checkCycle.weeklyChecked:
                         _alreadyRanThisWeek = true;
-                        _weeklyTime = DailyTime.AddDays(7);
+                        _weeklyTime =  DateTime.Now.AddDays(7);
                         break;
 
                     case Data.checkCycle.monthlyChecked:
                         _alreadyRanThisMonth = true;
-                        _monthlyTime = DailyTime.AddMonths(1);
+                        _monthlyTime = DateTime.Now.AddMonths(1);
                         break;
                 }
 
@@ -791,44 +821,58 @@ namespace FolderAutoUploader
         //Radio 
         private void monthlyRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            _checkType = Data.checkCycle.monthlyChecked;
-            datePickerButton.Enabled = false;
-            dateTimePicker.Enabled = false;
+            if (monthlyRadioButton.Checked)
+            {
+                _checkType = Data.checkCycle.monthlyChecked;
+                datePickerButton.Enabled = false;
+                dateTimePicker.Enabled = false;
 
-            //Add Time and remove it
-            _weeklyTime = new DateTime();
-            _monthlyTime.AddMonths(1);
+                _monthlyTime = DateTime.Now.AddMonths(1);
+            }
         }
 
         private void weeklyRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            _checkType = Data.checkCycle.weeklyChecked;
-            datePickerButton.Enabled = false;
-            dateTimePicker.Enabled = false;
+            if (weeklyRadioButton.Checked)
+            {
+                _checkType = Data.checkCycle.weeklyChecked;
+                datePickerButton.Enabled = false;
+                dateTimePicker.Enabled = false;
 
-            //Add Time and remove it
-            _weeklyTime.AddDays(7);
-            _monthlyTime = new DateTime();
+                _weeklyTime = DateTime.Now.AddDays(7);
+
+            }
         }
 
         private void dailyRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            _checkType = Data.checkCycle.dailyChecked;
-            datePickerButton.Enabled = false;
-            dateTimePicker.Enabled = false;
+            if (dailyRadioButton.Checked)
+            {
 
-            _weeklyTime = new DateTime();
-            _monthlyTime = new DateTime();
+                _checkType = Data.checkCycle.dailyChecked;
+                datePickerButton.Enabled = false;
+                dateTimePicker.Enabled = false;
+
+                
+                //_dailyTime = DateTime.Now.AddDays(1);
+                _dailyTime = DateTime.Now.AddDays(1);
+
+                Debug.WriteLine($"New time: {_dailyTime}");
+            }
         }
 
         private void noneRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            _checkType = Data.checkCycle.notChecked;
-            datePickerButton.Enabled = true;
-            dateTimePicker.Enabled = true;
+            if (noneRadioButton.Checked)
+            {
+                _checkType = Data.checkCycle.notChecked;
+                datePickerButton.Enabled = true;
+                dateTimePicker.Enabled = true;
 
-            _weeklyTime = new DateTime();
-            _monthlyTime = new DateTime();
+                _dailyTime = DateTime.Now;
+                _weeklyTime = DateTime.Now;
+                _monthlyTime = DateTime.Now;
+            }
         }
     }
 }

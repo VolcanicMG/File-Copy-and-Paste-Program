@@ -27,8 +27,9 @@ namespace FolderAutoUpdaterBackgroundProcess
         public bool _alreadyRanThisWeek;
         public bool _alreadyRanThisMonth;
 
-        public DateTime _weeklyTime;
-        public DateTime _monthlyTime;
+        private DateTime _weeklyTime;
+        private DateTime _monthlyTime;
+        private DateTime _dailyTime;
 
         //The timer used for this class
         public System.Windows.Forms.Timer timer;
@@ -75,6 +76,7 @@ namespace FolderAutoUpdaterBackgroundProcess
                 _dateLastRan = infoData.dateLastRan;
                 _loadOnStartup = infoData.loadOnStartup;
                 _runFromBackground = infoData.runFromBackground;
+                _dailyTime = infoData.dailyTime;
             }
 
             //Menu
@@ -85,9 +87,6 @@ namespace FolderAutoUpdaterBackgroundProcess
             trayIcon.Text = "Folder Copy/Paste";
             trayIcon.ContextMenu = trayMenu;
             trayIcon.Visible = true;
-
-            //Set the day
-            dailyTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 1, 0, 0, 0); //Todays date but at 1am
 
             StartTimer();
         }
@@ -118,6 +117,7 @@ namespace FolderAutoUpdaterBackgroundProcess
             infoData.dates = dates;
             infoData.weeklyTime = _weeklyTime;
             infoData.monthlyTime = _monthlyTime;
+            infoData.dailyTime = _dailyTime;
 
             using (FileStream stream = File.OpenWrite(Info.datesFileLocation))
             {
@@ -141,6 +141,7 @@ namespace FolderAutoUpdaterBackgroundProcess
                 timer = new System.Windows.Forms.Timer();
                 timer.Tick += Timer_Tick;
                 timer.Interval = (60) * 60000; //(x) represents minutes
+                //timer.Interval = (10) * 1000; //(x) represents seconds
                 timer.Enabled = true;
                 timer.Start();
             }
@@ -153,10 +154,10 @@ namespace FolderAutoUpdaterBackgroundProcess
             switch (_checkType)
             {
                 case Data.checkCycle.dailyChecked:
-                    if (dailyTime <= now && !_alreadyRanToday) //Need some kind of check also for each day
+                    if (_dailyTime <= now && !_alreadyRanToday) //Need some kind of check also for each day
                     {
                         RunPopup();
-                        dailyTime.AddDays(1);
+                        _dailyTime = now.AddDays(1);
                     }
                     break;
 
@@ -164,7 +165,7 @@ namespace FolderAutoUpdaterBackgroundProcess
                     if (_weeklyTime <= now && !_alreadyRanThisWeek) 
                     {
                         RunPopup();
-                        _weeklyTime.AddDays(7);
+                        _weeklyTime = now.AddDays(7);
                     }
                     break;
 
@@ -172,7 +173,7 @@ namespace FolderAutoUpdaterBackgroundProcess
                     if (_monthlyTime <= now && !_alreadyRanThisMonth) 
                     {
                         RunPopup();
-                        _monthlyTime.AddMonths(1);
+                        _monthlyTime = now.AddMonths(1);
                     }
                     break;
 
@@ -183,6 +184,8 @@ namespace FolderAutoUpdaterBackgroundProcess
                 default:
                     timer.Stop();
                     timer.Dispose();
+
+                    OnExit();
                     break;
             }
 

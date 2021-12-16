@@ -51,6 +51,7 @@ namespace FolderAutoUploaderMain
 
         public DateTime weeklyTime;
         public DateTime monthlyTime;
+        public DateTime dailyTime;
 
         public int folderLimit;
 

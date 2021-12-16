@@ -43,14 +43,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="FolderAutoUploader.exe" size="129536">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="FolderAutoUploader.exe" size="130048">
       <assemblyIdentity name="FolderAutoUploader" version="0.0.4.1" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>9K8gcZ9vE3zCuYd0TPyA2SPVW02RH60TFPgelIZMW4w=</dsig:DigestValue>
+        <dsig:DigestValue>AKrS+oJkrCN3Q+LLP2Siep6ndAydbE4YEtagBsbV/uY=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -62,7 +62,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>8EG8GE1jZUTe6/91zkaONmuijGNw/pxCTOohY8B8+Bg=</dsig:DigestValue>
+        <dsig:DigestValue>HFkOZHofWjvPmkpx9pY3LGRx/eX/cEFIlOOvVHR1u6s=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
