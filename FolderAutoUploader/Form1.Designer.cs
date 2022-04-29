@@ -32,9 +32,7 @@ namespace FolderAutoUploader
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.uploadButton = new System.Windows.Forms.Button();
-            this.Upload = new System.Windows.Forms.Label();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
-            this.monthCalendar1 = new System.Windows.Forms.MonthCalendar();
             this.uploadLocationString = new System.Windows.Forms.TextBox();
             this.replaceLocationString = new System.Windows.Forms.TextBox();
             this.UploadLocation = new System.Windows.Forms.Label();
@@ -66,6 +64,10 @@ namespace FolderAutoUploader
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.cycleGroupBox = new System.Windows.Forms.GroupBox();
+            this.noneRadioButton = new System.Windows.Forms.RadioButton();
+            this.monthlyRadioButton = new System.Windows.Forms.RadioButton();
+            this.weeklyRadioButton = new System.Windows.Forms.RadioButton();
+            this.dailyRadioButton = new System.Windows.Forms.RadioButton();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
@@ -76,14 +78,10 @@ namespace FolderAutoUploader
             this.RemoveButton = new System.Windows.Forms.Button();
             this.runningLabel = new System.Windows.Forms.Label();
             this.tabPage4 = new System.Windows.Forms.TabPage();
-            this.AutoRunCheckBox = new System.Windows.Forms.CheckBox();
+            this.autoRunCheckBox = new System.Windows.Forms.CheckBox();
             this.settingsLabel = new System.Windows.Forms.Label();
             this.windowsStartupCheckBox = new System.Windows.Forms.CheckBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.dailyRadioButton = new System.Windows.Forms.RadioButton();
-            this.weeklyRadioButton = new System.Windows.Forms.RadioButton();
-            this.monthlyRadioButton = new System.Windows.Forms.RadioButton();
-            this.noneRadioButton = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.tabControl1.SuspendLayout();
@@ -108,17 +106,6 @@ namespace FolderAutoUploader
             this.uploadButton.UseVisualStyleBackColor = true;
             this.uploadButton.Click += new System.EventHandler(this.button1_Click);
             // 
-            // Upload
-            // 
-            this.Upload.AutoSize = true;
-            this.Upload.Font = new System.Drawing.Font("Microsoft Sans Serif", 26.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Upload.Location = new System.Drawing.Point(17, 21);
-            this.Upload.Name = "Upload";
-            this.Upload.Size = new System.Drawing.Size(208, 39);
-            this.Upload.TabIndex = 1;
-            this.Upload.Text = "Copy Dates";
-            this.Upload.Click += new System.EventHandler(this.Upload_Click);
-            // 
             // progressBar1
             // 
             this.progressBar1.Location = new System.Drawing.Point(50, 40);
@@ -126,13 +113,6 @@ namespace FolderAutoUploader
             this.progressBar1.Size = new System.Drawing.Size(395, 23);
             this.progressBar1.TabIndex = 2;
             this.progressBar1.Click += new System.EventHandler(this.progressBar1_Click);
-            // 
-            // monthCalendar1
-            // 
-            this.monthCalendar1.Location = new System.Drawing.Point(12, 69);
-            this.monthCalendar1.Name = "monthCalendar1";
-            this.monthCalendar1.TabIndex = 3;
-            this.monthCalendar1.DateChanged += new System.Windows.Forms.DateRangeEventHandler(this.monthCalendar1_DateChanged);
             // 
             // uploadLocationString
             // 
@@ -169,7 +149,7 @@ namespace FolderAutoUploader
             // 
             // dateTimePicker
             // 
-            this.dateTimePicker.Location = new System.Drawing.Point(12, 268);
+            this.dateTimePicker.Location = new System.Drawing.Point(133, 239);
             this.dateTimePicker.Name = "dateTimePicker";
             this.dateTimePicker.Size = new System.Drawing.Size(227, 20);
             this.dateTimePicker.TabIndex = 9;
@@ -178,7 +158,7 @@ namespace FolderAutoUploader
             // datePickerButton
             // 
             this.datePickerButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.datePickerButton.Location = new System.Drawing.Point(266, 262);
+            this.datePickerButton.Location = new System.Drawing.Point(140, 305);
             this.datePickerButton.Name = "datePickerButton";
             this.datePickerButton.Size = new System.Drawing.Size(94, 36);
             this.datePickerButton.TabIndex = 10;
@@ -202,7 +182,7 @@ namespace FolderAutoUploader
             // dateTextBox
             // 
             this.dateTextBox.Cursor = System.Windows.Forms.Cursors.No;
-            this.dateTextBox.Location = new System.Drawing.Point(251, 69);
+            this.dateTextBox.Location = new System.Drawing.Point(134, 53);
             this.dateTextBox.Name = "dateTextBox";
             this.dateTextBox.ReadOnly = true;
             this.dateTextBox.Size = new System.Drawing.Size(226, 162);
@@ -214,7 +194,7 @@ namespace FolderAutoUploader
             // 
             this.dateAndTimesText.AutoSize = true;
             this.dateAndTimesText.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.dateAndTimesText.Location = new System.Drawing.Point(311, 36);
+            this.dateAndTimesText.Location = new System.Drawing.Point(181, 16);
             this.dateAndTimesText.Name = "dateAndTimesText";
             this.dateAndTimesText.Size = new System.Drawing.Size(131, 24);
             this.dateAndTimesText.TabIndex = 13;
@@ -224,7 +204,7 @@ namespace FolderAutoUploader
             // pickDateText
             // 
             this.pickDateText.AutoSize = true;
-            this.pickDateText.Location = new System.Drawing.Point(88, 252);
+            this.pickDateText.Location = new System.Drawing.Point(219, 223);
             this.pickDateText.Name = "pickDateText";
             this.pickDateText.Size = new System.Drawing.Size(54, 13);
             this.pickDateText.TabIndex = 14;
@@ -342,7 +322,7 @@ namespace FolderAutoUploader
             // 
             // clearDatesButton
             // 
-            this.clearDatesButton.Location = new System.Drawing.Point(366, 262);
+            this.clearDatesButton.Location = new System.Drawing.Point(261, 305);
             this.clearDatesButton.Name = "clearDatesButton";
             this.clearDatesButton.Size = new System.Drawing.Size(92, 36);
             this.clearDatesButton.TabIndex = 26;
@@ -433,8 +413,6 @@ namespace FolderAutoUploader
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.cycleGroupBox);
-            this.groupBox2.Controls.Add(this.monthCalendar1);
-            this.groupBox2.Controls.Add(this.Upload);
             this.groupBox2.Controls.Add(this.clearDatesButton);
             this.groupBox2.Controls.Add(this.dateTimePicker);
             this.groupBox2.Controls.Add(this.datePickerButton);
@@ -453,12 +431,58 @@ namespace FolderAutoUploader
             this.cycleGroupBox.Controls.Add(this.monthlyRadioButton);
             this.cycleGroupBox.Controls.Add(this.weeklyRadioButton);
             this.cycleGroupBox.Controls.Add(this.dailyRadioButton);
-            this.cycleGroupBox.Location = new System.Drawing.Point(12, 294);
+            this.cycleGroupBox.Location = new System.Drawing.Point(124, 265);
             this.cycleGroupBox.Name = "cycleGroupBox";
             this.cycleGroupBox.Size = new System.Drawing.Size(248, 34);
             this.cycleGroupBox.TabIndex = 27;
             this.cycleGroupBox.TabStop = false;
             this.cycleGroupBox.Text = "Select Cycle";
+            // 
+            // noneRadioButton
+            // 
+            this.noneRadioButton.AutoSize = true;
+            this.noneRadioButton.Checked = true;
+            this.noneRadioButton.Location = new System.Drawing.Point(190, 11);
+            this.noneRadioButton.Name = "noneRadioButton";
+            this.noneRadioButton.Size = new System.Drawing.Size(51, 17);
+            this.noneRadioButton.TabIndex = 3;
+            this.noneRadioButton.TabStop = true;
+            this.noneRadioButton.Text = "None";
+            this.noneRadioButton.UseVisualStyleBackColor = true;
+            this.noneRadioButton.CheckedChanged += new System.EventHandler(this.noneRadioButton_CheckedChanged);
+            // 
+            // monthlyRadioButton
+            // 
+            this.monthlyRadioButton.AutoSize = true;
+            this.monthlyRadioButton.Location = new System.Drawing.Point(128, 11);
+            this.monthlyRadioButton.Name = "monthlyRadioButton";
+            this.monthlyRadioButton.Size = new System.Drawing.Size(62, 17);
+            this.monthlyRadioButton.TabIndex = 2;
+            this.monthlyRadioButton.Text = "Monthly";
+            this.monthlyRadioButton.UseVisualStyleBackColor = true;
+            this.monthlyRadioButton.CheckedChanged += new System.EventHandler(this.monthlyRadioButton_CheckedChanged);
+            // 
+            // weeklyRadioButton
+            // 
+            this.weeklyRadioButton.AutoSize = true;
+            this.weeklyRadioButton.Location = new System.Drawing.Point(61, 11);
+            this.weeklyRadioButton.Name = "weeklyRadioButton";
+            this.weeklyRadioButton.Size = new System.Drawing.Size(61, 17);
+            this.weeklyRadioButton.TabIndex = 1;
+            this.weeklyRadioButton.Text = "Weekly";
+            this.weeklyRadioButton.UseVisualStyleBackColor = true;
+            this.weeklyRadioButton.CheckedChanged += new System.EventHandler(this.weeklyRadioButton_CheckedChanged);
+            // 
+            // dailyRadioButton
+            // 
+            this.dailyRadioButton.AutoSize = true;
+            this.dailyRadioButton.Location = new System.Drawing.Point(7, 11);
+            this.dailyRadioButton.Name = "dailyRadioButton";
+            this.dailyRadioButton.Size = new System.Drawing.Size(48, 17);
+            this.dailyRadioButton.TabIndex = 0;
+            this.dailyRadioButton.Text = "Daily";
+            this.dailyRadioButton.UseVisualStyleBackColor = true;
+            this.dailyRadioButton.CheckedChanged += new System.EventHandler(this.dailyRadioButton_CheckedChanged);
             // 
             // tabPage2
             // 
@@ -562,7 +586,7 @@ namespace FolderAutoUploader
             // 
             // tabPage4
             // 
-            this.tabPage4.Controls.Add(this.AutoRunCheckBox);
+            this.tabPage4.Controls.Add(this.autoRunCheckBox);
             this.tabPage4.Controls.Add(this.settingsLabel);
             this.tabPage4.Controls.Add(this.windowsStartupCheckBox);
             this.tabPage4.Location = new System.Drawing.Point(4, 22);
@@ -573,17 +597,17 @@ namespace FolderAutoUploader
             this.tabPage4.Text = "Settings";
             this.tabPage4.UseVisualStyleBackColor = true;
             // 
-            // AutoRunCheckBox
+            // autoRunCheckBox
             // 
-            this.AutoRunCheckBox.AutoSize = true;
-            this.AutoRunCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.AutoRunCheckBox.Location = new System.Drawing.Point(184, 100);
-            this.AutoRunCheckBox.Name = "AutoRunCheckBox";
-            this.AutoRunCheckBox.Size = new System.Drawing.Size(167, 24);
-            this.AutoRunCheckBox.TabIndex = 2;
-            this.AutoRunCheckBox.Text = "Auto Run Schedule";
-            this.AutoRunCheckBox.UseVisualStyleBackColor = true;
-            this.AutoRunCheckBox.CheckedChanged += new System.EventHandler(this.AutoRunCheckBox_CheckedChanged);
+            this.autoRunCheckBox.AutoSize = true;
+            this.autoRunCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.autoRunCheckBox.Location = new System.Drawing.Point(184, 100);
+            this.autoRunCheckBox.Name = "autoRunCheckBox";
+            this.autoRunCheckBox.Size = new System.Drawing.Size(167, 24);
+            this.autoRunCheckBox.TabIndex = 2;
+            this.autoRunCheckBox.Text = "Auto Run Schedule";
+            this.autoRunCheckBox.UseVisualStyleBackColor = true;
+            this.autoRunCheckBox.CheckedChanged += new System.EventHandler(this.AutoRunCheckBox_CheckedChanged);
             // 
             // settingsLabel
             // 
@@ -624,52 +648,6 @@ namespace FolderAutoUploader
             this.groupBox4.TabIndex = 29;
             this.groupBox4.TabStop = false;
             // 
-            // dailyRadioButton
-            // 
-            this.dailyRadioButton.AutoSize = true;
-            this.dailyRadioButton.Location = new System.Drawing.Point(7, 11);
-            this.dailyRadioButton.Name = "dailyRadioButton";
-            this.dailyRadioButton.Size = new System.Drawing.Size(48, 17);
-            this.dailyRadioButton.TabIndex = 0;
-            this.dailyRadioButton.Text = "Daily";
-            this.dailyRadioButton.UseVisualStyleBackColor = true;
-            this.dailyRadioButton.CheckedChanged += new System.EventHandler(this.dailyRadioButton_CheckedChanged);
-            // 
-            // weeklyRadioButton
-            // 
-            this.weeklyRadioButton.AutoSize = true;
-            this.weeklyRadioButton.Location = new System.Drawing.Point(61, 11);
-            this.weeklyRadioButton.Name = "weeklyRadioButton";
-            this.weeklyRadioButton.Size = new System.Drawing.Size(61, 17);
-            this.weeklyRadioButton.TabIndex = 1;
-            this.weeklyRadioButton.Text = "Weekly";
-            this.weeklyRadioButton.UseVisualStyleBackColor = true;
-            this.weeklyRadioButton.CheckedChanged += new System.EventHandler(this.weeklyRadioButton_CheckedChanged);
-            // 
-            // monthlyRadioButton
-            // 
-            this.monthlyRadioButton.AutoSize = true;
-            this.monthlyRadioButton.Location = new System.Drawing.Point(128, 11);
-            this.monthlyRadioButton.Name = "monthlyRadioButton";
-            this.monthlyRadioButton.Size = new System.Drawing.Size(56, 17);
-            this.monthlyRadioButton.TabIndex = 2;
-            this.monthlyRadioButton.Text = "Mothly";
-            this.monthlyRadioButton.UseVisualStyleBackColor = true;
-            this.monthlyRadioButton.CheckedChanged += new System.EventHandler(this.monthlyRadioButton_CheckedChanged);
-            // 
-            // noneRadioButton
-            // 
-            this.noneRadioButton.AutoSize = true;
-            this.noneRadioButton.Checked = true;
-            this.noneRadioButton.Location = new System.Drawing.Point(190, 11);
-            this.noneRadioButton.Name = "noneRadioButton";
-            this.noneRadioButton.Size = new System.Drawing.Size(51, 17);
-            this.noneRadioButton.TabIndex = 3;
-            this.noneRadioButton.TabStop = true;
-            this.noneRadioButton.Text = "None";
-            this.noneRadioButton.UseVisualStyleBackColor = true;
-            this.noneRadioButton.CheckedChanged += new System.EventHandler(this.noneRadioButton_CheckedChanged);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -708,9 +686,7 @@ namespace FolderAutoUploader
         #endregion
 
         private System.Windows.Forms.Button uploadButton;
-        private System.Windows.Forms.Label Upload;
         private System.Windows.Forms.ProgressBar progressBar1;
-        private System.Windows.Forms.MonthCalendar monthCalendar1;
         private System.Windows.Forms.TextBox uploadLocationString;
         private System.Windows.Forms.TextBox replaceLocationString;
         private System.Windows.Forms.Label UploadLocation;
@@ -754,7 +730,7 @@ namespace FolderAutoUploader
         private System.Windows.Forms.TabPage tabPage4;
         private System.Windows.Forms.Label settingsLabel;
         private System.Windows.Forms.CheckBox windowsStartupCheckBox;
-        private System.Windows.Forms.CheckBox AutoRunCheckBox;
+        private System.Windows.Forms.CheckBox autoRunCheckBox;
         private System.Windows.Forms.GroupBox cycleGroupBox;
         private System.Windows.Forms.RadioButton monthlyRadioButton;
         private System.Windows.Forms.RadioButton weeklyRadioButton;

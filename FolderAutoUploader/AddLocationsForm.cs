@@ -35,8 +35,16 @@ namespace FolderAutoUploader
             locationReplace = replaceLocationString.Text;
             locationName = LocationNameTextBox.Text;
 
+            //Checking to make sure we are not loading in the same folder
+            if (replaceLocationString.Text.Equals(uploadLocationString.Text) || ProcessHelper.CheckDirectoryContain(locationCopy, locationReplace))
+            {
+                return;
+            }
+
             //Check to make sure that both directories are correct and valid
-            if (ProcessHelper.CheckDirectory(locationCopy) && ProcessHelper.CheckDirectory(locationReplace) && (locationName != null || locationName != ""))
+            if (ProcessHelper.CheckDirectory(locationCopy) && 
+                ProcessHelper.CheckDirectory(locationReplace) && 
+                (locationName != null || locationName != ""))
             {
                 //Set the locations in a class
                 LocationsAdd newLocationAdd = new LocationsAdd();
@@ -45,6 +53,7 @@ namespace FolderAutoUploader
                 newLocationAdd.replace = locationReplace;
                 newLocationAdd.selected = true;
 
+                //Checking to make sure we dont have the same name twice
                 if(Form1._scheduleLocations.Exists(x => x.name == newLocationAdd.name))
                 {
                     return;
@@ -60,7 +69,7 @@ namespace FolderAutoUploader
             }
             else
             {
-
+                
             }
         }
 
@@ -92,6 +101,11 @@ namespace FolderAutoUploader
                     replaceLocationString.Text = folder;
                 }
             }
+        }
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

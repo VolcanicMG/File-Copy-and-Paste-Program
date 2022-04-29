@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows.Forms;
@@ -31,6 +32,8 @@ namespace FolderAutoUploader
         public bool overwriteFiles;
 
         public static bool workin;
+        
+        private bool switched;
 
         public static System.Windows.Forms.Timer timer;
 
@@ -43,12 +46,18 @@ namespace FolderAutoUploader
         //Settings
         public bool _loadOnStartup;
         public bool _runFromBackground;
+        public bool _runMinimized;
 
-        public Form1()
+        //Build Info
+        public string currentVersion { get; private set; }
+
+        public Form1(bool runMinimized)
         {
             InitializeComponent();
 
-            this.Text += " | Version: V" + Application.ProductVersion;
+            _runMinimized = runMinimized;
+
+            this.Text += $" | Version: V{Application.ProductVersion}";
 
             //Set tool-tips
             toolTip1.SetToolTip(this.label2, "Pick a folder to override another");
@@ -109,6 +118,17 @@ namespace FolderAutoUploader
             else
             {
                 //Print("Dates file not created yet (Will happen on first ever launch or if the file gets deleted)"); //WILL CAUSE ERROR ATM. MOVE TO LOAD?
+            }
+
+            //Set numeric 
+            if (numericUpDown1.Value <= 0)
+            {
+                numericUpDown1.Value = 3;
+            }
+
+            if(_folderLimit < 2)
+            {
+                _folderLimit = 3;
             }
 
             //Set the value of the incriminate
@@ -248,7 +268,8 @@ namespace FolderAutoUploader
             infoData.loadOnStartup = _loadOnStartup;
             infoData.runFromBackground = _runFromBackground;
             infoData.dailyTime = _dailyTime;
-
+            
+            //Should add an try catch here at some point (And all the times we write and open)****************************************--------------------------*****************************************
             using (FileStream stream = File.OpenWrite(Info.datesFileLocation))
             {
                 formatter.Serialize(stream, infoData);
@@ -275,7 +296,11 @@ namespace FolderAutoUploader
                 Save();
             }
 
-            Process.Start(EXEPaths.backgroundEXEPath, "-Start");
+            //If we have nothing checking and nothing in the dates there is no reason to start the background process
+            if (_checkType != Data.checkCycle.notChecked && dates.Count <= 0)
+            {
+                Process.Start(EXEPaths.backgroundEXEPath, "-Start");
+            }
         }
 
         /// <summary>
@@ -349,7 +374,6 @@ namespace FolderAutoUploader
         public void RunStartup()
         {
             DateTime now = DateTime.Now;
-            DateTime DailyTime = new DateTime(now.Year, now.Month, now.Day, 1, 0, 0, 0);
 
             Invoke(new Action(() =>
             {
@@ -371,6 +395,15 @@ namespace FolderAutoUploader
         //Used to start an copy action
         public void button1_Click(object sender = null, EventArgs e = null)
         {
+            Print("-------------------NEW PROCESS------------------------");
+
+            //Checking to make sure we are not loading in the same folder
+            if (replaceLocationString.Text.Equals(uploadLocationString.Text) || ProcessHelper.CheckDirectoryContain(uploadLocationString.Text, replaceLocationString.Text))
+            {
+                Print("Locations are the same or you are in the same directory as the copy location");
+                return;
+            }
+
             ProcessHelper copy = new ProcessHelper(this, true, 0, uploadLocationString.Text, replaceLocationString.Text, overwriteFiles, _folderLimit, progressBar1, progressBar2, folderInfoLabel, fileInfoLabel);
             copy.Start();
         }
@@ -580,12 +613,56 @@ namespace FolderAutoUploader
 
         }
 
+        //so if the Internet is out the client won't crash on loading
+        private bool CheckForInternetConnection()
+        {
+            try
+            {
+                using (var client = new WebClient())
+                using (client.OpenRead("http://google.com/generate_204"))
+                    client.Dispose();
+                    return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private void CheckVersion()
+        {
+            //Goes out and grabs the version that the mod browser has
+            using (WebClient client = new WebClient())
+            {
+                if (CheckForInternetConnection())
+                {
+                    //Parsing the data we need
+                    try
+                    {
+                        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+                        var json = client.DownloadString("https://raw.githubusercontent.com/VolcanicMG/Folder-Copy-and-Paste-Program/main/Version.txt");
+                        json.ToString().Trim();
+                        currentVersion = json;
+                        
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.WriteLine(e);
+                    }
+                    finally
+                    {
+                        client.Dispose();
+                    }
+                }
+            }
+        }
+
         private void Form1_Load(object sender, EventArgs e)
         {
-
             cancelButton.Enabled = false;
 
             windowsStartupCheckBox.Checked = _loadOnStartup;
+            autoRunCheckBox.Checked = _runFromBackground;
 
             //Fill in the cells for the locations
             if (_scheduleLocations != null && _scheduleLocations.Count > 0)
@@ -596,13 +673,28 @@ namespace FolderAutoUploader
                 }
             }
 
-            //Display the version
-            Print($"Version: V{Application.ProductVersion}");
+            //Get and check the version from github
+            CheckVersion();
 
-            //Once the program starts run?
-            if(_runFromBackground)
+            //Checking to make sure we are on the right version
+            if (currentVersion == null)
+            {
+                Print("There is no Internet connection");
+            }
+            else if (!Application.ProductVersion.Equals(currentVersion))
+            {
+                Print("You are not on the current version, please check the github for the latests version");
+
+                //Display the version
+                Print($"Web Version: V{currentVersion} Local Version: {Application.ProductVersion}");
+            }
+
+            //Once the program starts from the background run, and run minimized
+            if(_runFromBackground && _runMinimized)
             {
                 RunStartup();
+
+                this.WindowState = FormWindowState.Minimized;
             }
         }
 
@@ -643,7 +735,22 @@ namespace FolderAutoUploader
         //Copy All Selected Button
         private void button1_Click_1(object sender = null, EventArgs e = null)
         {
-            if (checkedListBoxLocations.CheckedItems.Count > 0 && !workin)
+            //Change the button and what it does when pressed
+            if (!switched && checkedListBoxLocations.CheckedItems.Count > 0 && !workin)
+            {
+                switched = true;
+                copySelectedButton.Text = "Cancel";
+            }
+            else if (switched)
+            {
+                switched = false;
+                workin = false;
+                copySelectedButton.Text = "Copy Selected";
+
+                return;
+            }
+
+            if (checkedListBoxLocations.CheckedItems.Count > 0 && !workin && switched)
             {
                 int id = 0;
 
@@ -681,9 +788,10 @@ namespace FolderAutoUploader
 
         public void NextProcess()
         {
-            //0 is the curret process being processed
+            //0 is the current process being processed
             if (_processes.Count > 0)
             {
+                Print("-------------------NEW PROCESS------------------------");
                 _processes[0].Start();
             }
             else
@@ -711,6 +819,17 @@ namespace FolderAutoUploader
                 }
 
                 Print("All done with processes");
+
+                //Make sure we reset the copy button
+                switched = true;
+
+                //Invoke the process that first had the text and tell it to change
+                Invoke(new Action(() =>
+                {
+                    copySelectedButton.Text = "Copy Selected";
+
+                    Reset();
+                }));
             }
         }
 
@@ -760,7 +879,7 @@ namespace FolderAutoUploader
                 //Use a double try/catch to make sure the program does not crash and so we can use the finally statement
                 try
                 {
-                    RegistryKey key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+                    RegistryKey key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\currentVersion\\Run", true);
 
                     try
                     {
@@ -783,7 +902,7 @@ namespace FolderAutoUploader
                 //Use a double try/catch to make sure the program does not crash and so we can use the finally statement
                 try
                 {
-                    RegistryKey key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+                    RegistryKey key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\currentVersion\\Run", true);
 
                     try
                     {
@@ -811,7 +930,7 @@ namespace FolderAutoUploader
 
         private void AutoRunCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            if(AutoRunCheckBox.Checked)
+            if(autoRunCheckBox.Checked)
             {
                 _runFromBackground = true;
             } 

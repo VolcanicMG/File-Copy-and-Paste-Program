@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -20,6 +21,8 @@ namespace FolderAutoUploader
 
         private Thread workerThread;
 
+        private int oldestPreselect;
+
         public FileSelectionAndDeletionForm()
         {
             InitializeComponent();
@@ -29,6 +32,9 @@ namespace FolderAutoUploader
         {
             CheckFolders();
 
+            //The lastest date
+            var latestDate = deleationDates.OrderBy(x => x.Date).FirstOrDefault();
+
             foreach (string folderPath in backupFolders)
             {
                 folderCheckedListBox.Items.Add(folderPath);
@@ -36,14 +42,23 @@ namespace FolderAutoUploader
 
             for (int i = 0; i < deleationDates.Count; i++)
             {
+
                 string date = String.Format("{0:M/d/yyyy}", deleationDates[i]);
 
-                LastModifedDates.Text += date + "\n";
+                if (deleationDates[i] == latestDate)
+                {
+                    date += " *Oldest";
+
+                    oldestPreselect = i;
+                }
+
+                lastModifedDates.Text += date + "\n";
             }
 
-            var latestDate = deleationDates.OrderBy(x => x.Date).FirstOrDefault();
+            folderCheckedListBox.SelectedIndex = oldestPreselect;
+            folderCheckedListBox.SetItemChecked(oldestPreselect, true);
 
-            LastestDate.Text += String.Format("{0:M/d/yyyy}", latestDate);
+            todaysDate.Text += String.Format("{0:M/d/yyyy}", DateTime.Now.Date);
 
             numOfFolders = 0;
 
@@ -70,10 +85,22 @@ namespace FolderAutoUploader
 
         private void button1_Click(object sender, EventArgs e)
         {
-            EnableButtons(false);
+            if (folderCheckedListBox.CheckedItems.Count > 0)
+            {
+                EnableButtons(false);
 
-            workerThread = new Thread(() => StartDeletion());
-            workerThread.Start();
+                workerThread = new Thread(() => StartDeletion());
+                workerThread.Start();
+            }
+            else
+            {
+                PromptForm promptForm = new PromptForm();
+                promptForm.text = "You have nothing selected";
+                promptForm.buttons = false;
+                DialogResult dialogResult = promptForm.ShowDialog();
+
+                return;
+            }
         }
 
         private void StartDeletion()
@@ -143,6 +170,7 @@ namespace FolderAutoUploader
                     //_mainForm.Print("Deletion bar value" + deletionProgressBar.Value);
 
                     Thread.Sleep(10);
+
                     process.Start();
 
                     //When the process ends dispose of the popup
@@ -191,7 +219,10 @@ namespace FolderAutoUploader
 
         private void backButton_Click(object sender, EventArgs e)
         {
-            _mainForm.Reset();
+            _mainForm.Invoke(new Action(() =>
+            {
+                _mainForm.Reset();
+            }));
 
             this.Dispose();
         }
@@ -202,6 +233,11 @@ namespace FolderAutoUploader
         }
 
         private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void folderCheckedListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
 
         }

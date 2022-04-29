@@ -1639,7 +1639,7 @@
   },
   "packageFolders": {
     "C:\\Users\\ethan\\.nuget\\packages\\": {},
-    "D:\\VisualStudioTools\\NuGetPackages": {}
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
@@ -1652,7 +1652,7 @@
       "projectStyle": "PackageReference",
       "skipContentFileWrite": true,
       "fallbackFolders": [
-        "D:\\VisualStudioTools\\NuGetPackages"
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
         "C:\\Users\\ethan\\AppData\\Roaming\\NuGet\\NuGet.Config",

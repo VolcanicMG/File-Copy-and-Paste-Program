@@ -3,7 +3,7 @@
   <assemblyIdentity name="FolderAutoUploader.application" version="0.0.4.0" publicKeyToken="0000000000000000" language="en" processorArchitecture="msil" xmlns="urn:schemas-microsoft-com:asm.v1" />
   <description asmv2:publisher="Ethan" asmv2:product="FolderAutoUploader" xmlns="urn:schemas-microsoft-com:asm.v1" />
   <deployment install="true" mapFileExtensions="true" co.v1:createDesktopShortcut="true">
-    <deploymentProvider codebase="http://ethan/FolderAutoUploader/FolderAutoUploader.application" />
+    <deploymentProvider codebase="http://eh/FolderAutoUploader/FolderAutoUploader.application" />
   </deployment>
   <compatibleFrameworks xmlns="urn:schemas-microsoft-com:clickonce.v2">
     <framework targetVersion="4.7.2" profile="Full" supportedRuntime="4.0.30319" />
@@ -16,7 +16,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>ug1Hg6QkPmglThVmU7LKV4lHZeR2X+q2gvIXra5gF/g=</dsig:DigestValue>
+        <dsig:DigestValue>SU9l7zTx2CwMqE7p/D1RI67ynaWJHH8WHk21eRMtYDk=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

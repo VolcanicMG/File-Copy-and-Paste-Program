@@ -45,8 +45,6 @@ namespace FolderAutoUpdaterBackgroundProcess
         public bool _loadOnStartup;
         public bool _runFromBackground;
 
-        
-
         public BackgroundProcess()
         {
             InitializeComponent();
@@ -220,6 +218,12 @@ namespace FolderAutoUpdaterBackgroundProcess
                 .AddAudio(new Uri("ms-appx:///Sound.mp3"))
                 .SetToastScenario(ToastScenario.Alarm)
                 .Show();
+
+            //If the user has the following setting set up we will run the program minimized when the timer is triggered
+            if(_runFromBackground)
+            {
+                Process.Start(EXEPaths.mainEXEPath, "-StartMinimizedFromBackground");
+            }
         }
     }
 }

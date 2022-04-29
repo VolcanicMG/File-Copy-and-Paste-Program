@@ -6,3 +6,4 @@ C:\Users\ethan\source\repos\FolderAutoUploader\FolderAutoUploaderMain\obj\Debug\
 C:\Users\ethan\source\repos\FolderAutoUploader\FolderAutoUploaderMain\bin\Debug\FolderAutoUploaderMain.dll.config
 C:\Users\ethan\source\repos\FolderAutoUploader\FolderAutoUploaderMain\bin\Debug\FolderAutoUploaderMain.dll
 C:\Users\ethan\source\repos\FolderAutoUploader\FolderAutoUploaderMain\obj\Debug\FolderAutoUploaderMain.dll
+C:\Users\ethan\source\repos\FolderAutoUploader\FolderAutoUploaderMain\obj\Debug\FolderAutoUploaderMain.csproj.AssemblyReference.cache

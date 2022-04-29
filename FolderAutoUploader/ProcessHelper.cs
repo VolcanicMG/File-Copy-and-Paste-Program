@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
@@ -21,7 +22,7 @@ namespace FolderAutoUploader
         public bool overwriteFiles;
 
         //Threading
-        private Thread workerThread;
+        public Thread workerThread;
 
         //Counting
         public int actualFiles;
@@ -41,6 +42,8 @@ namespace FolderAutoUploader
 
         //ID
         public int workerID;
+
+        private bool runOncePer;
 
         public ProcessHelper(Form1 _mainForm, bool _single, int _workerID, string _uploadLocationText, string _replaceLocationText, bool _overwriteFils, int _folderLimit,
             ProgressBar _progressBar1 = null, ProgressBar _progressBar2 = null, Label _folderInfoLabel = null, Label _fileInfoLabel = null)
@@ -85,8 +88,8 @@ namespace FolderAutoUploader
                 FLADF.Show();
             }
             else
-
             {
+                Debug.WriteLine("Canceled");
                 mainForm.Reset();
                 return;
             }
@@ -97,6 +100,8 @@ namespace FolderAutoUploader
         //Used to start the copy process
         public void Start()
         {
+            Debug.WriteLine(workerID + " - Starting this worker");
+
             Form1.workin = true;
 
             int count = 1;
@@ -105,7 +110,7 @@ namespace FolderAutoUploader
             //The list used to get the amount of files 
             List<string> folderList = new List<string>();
 
-            //instantate the list
+            //Instantiate the list
             for (int i = 0; i < 50; i++)
             {
                 folderList.Add("");
@@ -195,8 +200,12 @@ namespace FolderAutoUploader
                                 Directory.CreateDirectory(newPath);
 
                                 //converge
-                                workerThread = new Thread(() => ConvergeFiles(uploadPath, newPath));
-                                workerThread.Start();
+                                if (workerThread == null)
+                                {
+                                    workerThread = new Thread(() => ConvergeFiles(uploadPath, newPath));
+                                    workerThread.Start();
+                                }
+
 
                                 break;
                             }
@@ -299,7 +308,7 @@ namespace FolderAutoUploader
 
                 mainForm.Invoke(new Action(() =>
                 {
-                    folderInfoLabel.Text = "Folder: " + replace;
+                    folderInfoLabel.Text = "New Folder: " + replace;
                 }));
 
                 DirectoryInfo dir = new DirectoryInfo(upload);
@@ -369,30 +378,38 @@ namespace FolderAutoUploader
                 }));
 
                 //The program has stopped
-                if (actualFiles == 0)
+                if (actualFiles == 0 && !runOncePer)
                 {
-                    mainForm.Print("Done!");
+                    runOncePer = true;
 
-                    mainForm._dateLastRan = DateTime.Today;
-
-                    mainForm.Reset();
-
-                    //Remove the process from the list and select the next one
                     Form1._processes.Remove(this);
 
                     //Move on to the next process
                     if (!single)
                     {
-                        mainForm.NextProcess();
+                        mainForm.Invoke(new Action(() =>
+                        {
+                            mainForm.NextProcess();
+                        }));
+                    }
+                    else
+                    {
+                        mainForm.Invoke(new Action(() =>
+                        {
+                            mainForm.Reset();
+                            mainForm.Print("Done!");
+                            mainForm._dateLastRan = DateTime.Today;
+                        }));
                     }
 
-                    //remove the thread
-                    workerThread.Abort(this);
+                    workerThread.Abort();
+
                 }
             }
             else if (!Form1.workin)
             {
                 mainForm.Print("Canceled");
+                workerThread.Abort(this);
             }
             else
             {
@@ -441,6 +458,23 @@ namespace FolderAutoUploader
 
                 return 0;
             }
+        }
+
+        public static bool CheckDirectoryContain(string mainDir, string subCheck)
+        {
+            DirectoryInfo di = new DirectoryInfo(mainDir);
+            DirectoryInfo[] dirs = di.GetDirectories();
+
+            foreach (DirectoryInfo dir in dirs)
+            {
+                if (dir.FullName.Equals(subCheck))
+                {
+                    Debug.WriteLine("Folder was found in the sub folders of the your upload path");
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         /// <summary>

@@ -40,7 +40,14 @@ namespace FolderAutoUploader
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            Application.Run(new Form1());
+            if(args.Length > 0 && args[0].Equals("-StartMinimizedFromBackground"))
+            {
+                Application.Run(new Form1(true));
+            }
+            else
+            {
+                Application.Run(new Form1(false));
+            }
 
         }
     }

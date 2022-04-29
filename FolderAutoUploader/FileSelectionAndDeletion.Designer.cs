@@ -43,8 +43,8 @@ namespace FolderAutoUploader
             this.statusLabel = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
-            this.LastModifedDates = new System.Windows.Forms.RichTextBox();
-            this.LastestDate = new System.Windows.Forms.Label();
+            this.lastModifedDates = new System.Windows.Forms.RichTextBox();
+            this.todaysDate = new System.Windows.Forms.Label();
             this.deletionProgressBar = new System.Windows.Forms.ProgressBar();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             this.SuspendLayout();
@@ -58,6 +58,7 @@ namespace FolderAutoUploader
             this.folderCheckedListBox.Size = new System.Drawing.Size(292, 304);
             this.folderCheckedListBox.Sorted = true;
             this.folderCheckedListBox.TabIndex = 3;
+            this.folderCheckedListBox.SelectedIndexChanged += new System.EventHandler(this.folderCheckedListBox_SelectedIndexChanged);
             // 
             // deleteButton
             // 
@@ -102,25 +103,25 @@ namespace FolderAutoUploader
             // 
             this.bindingSource1.CurrentChanged += new System.EventHandler(this.bindingSource1_CurrentChanged);
             // 
-            // LastModifedDates
+            // lastModifedDates
             // 
-            this.LastModifedDates.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.LastModifedDates.Location = new System.Drawing.Point(367, 57);
-            this.LastModifedDates.Name = "LastModifedDates";
-            this.LastModifedDates.ReadOnly = true;
-            this.LastModifedDates.Size = new System.Drawing.Size(140, 304);
-            this.LastModifedDates.TabIndex = 8;
-            this.LastModifedDates.Text = "";
+            this.lastModifedDates.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lastModifedDates.Location = new System.Drawing.Point(367, 57);
+            this.lastModifedDates.Name = "lastModifedDates";
+            this.lastModifedDates.ReadOnly = true;
+            this.lastModifedDates.Size = new System.Drawing.Size(140, 304);
+            this.lastModifedDates.TabIndex = 8;
+            this.lastModifedDates.Text = "";
             // 
-            // LastestDate
+            // todaysDate
             // 
-            this.LastestDate.AutoSize = true;
-            this.LastestDate.Location = new System.Drawing.Point(367, 368);
-            this.LastestDate.Name = "LastestDate";
-            this.LastestDate.Size = new System.Drawing.Size(73, 13);
-            this.LastestDate.TabIndex = 9;
-            this.LastestDate.Text = "Lastest Date: ";
-            this.LastestDate.Click += new System.EventHandler(this.label2_Click);
+            this.todaysDate.AutoSize = true;
+            this.todaysDate.Location = new System.Drawing.Point(367, 368);
+            this.todaysDate.Name = "todaysDate";
+            this.todaysDate.Size = new System.Drawing.Size(76, 13);
+            this.todaysDate.TabIndex = 9;
+            this.todaysDate.Text = "Today\'s Date: ";
+            this.todaysDate.Click += new System.EventHandler(this.label2_Click);
             // 
             // deletionProgressBar
             // 
@@ -137,8 +138,8 @@ namespace FolderAutoUploader
             this.ClientSize = new System.Drawing.Size(595, 450);
             this.ControlBox = false;
             this.Controls.Add(this.deletionProgressBar);
-            this.Controls.Add(this.LastestDate);
-            this.Controls.Add(this.LastModifedDates);
+            this.Controls.Add(this.todaysDate);
+            this.Controls.Add(this.lastModifedDates);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.statusLabel);
             this.Controls.Add(this.backButton);
@@ -164,8 +165,8 @@ namespace FolderAutoUploader
         private System.Windows.Forms.Label statusLabel;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.BindingSource bindingSource1;
-        private System.Windows.Forms.RichTextBox LastModifedDates;
-        private System.Windows.Forms.Label LastestDate;
+        private System.Windows.Forms.RichTextBox lastModifedDates;
+        private System.Windows.Forms.Label todaysDate;
         private System.Windows.Forms.ProgressBar deletionProgressBar;
     }
 }

@@ -129,9 +129,10 @@ namespace FolderAutoUploader
             this.label4.AutoSize = true;
             this.label4.Location = new System.Drawing.Point(28, 52);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(79, 13);
+            this.label4.Size = new System.Drawing.Size(35, 13);
             this.label4.TabIndex = 25;
-            this.label4.Text = "Location Name";
+            this.label4.Text = "Name";
+            this.label4.Click += new System.EventHandler(this.label4_Click);
             // 
             // AddLocationsForm
             // 
