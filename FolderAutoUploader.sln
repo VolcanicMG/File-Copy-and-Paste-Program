@@ -1,0 +1,41 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32516.85
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FolderAutoUploader", "FolderAutoUploader\FolderAutoUploader.csproj", "{59B15578-FCB1-4607-91DA-6120F610497C}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "FolderCopy", "InstallerSetup\InstallerSetup.vdproj", "{C37AF68B-C38A-4061-A93E-7DFFF3A59403}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FolderAutoUpdaterBackgroundProcess", "FolderAutoUpdaterBackgroundProcess\FolderAutoUpdaterBackgroundProcess.csproj", "{692A3DE4-C281-4043-9FEA-925A41220700}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FolderAutoUploaderMain", "FolderAutoUploaderMain\FolderAutoUploaderMain.csproj", "{0D8F4421-FBBB-4186-B920-5B1EE11113C2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{59B15578-FCB1-4607-91DA-6120F610497C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59B15578-FCB1-4607-91DA-6120F610497C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59B15578-FCB1-4607-91DA-6120F610497C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{59B15578-FCB1-4607-91DA-6120F610497C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C37AF68B-C38A-4061-A93E-7DFFF3A59403}.Debug|Any CPU.ActiveCfg = Debug
+		{C37AF68B-C38A-4061-A93E-7DFFF3A59403}.Release|Any CPU.ActiveCfg = Release
+		{692A3DE4-C281-4043-9FEA-925A41220700}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{692A3DE4-C281-4043-9FEA-925A41220700}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{692A3DE4-C281-4043-9FEA-925A41220700}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{692A3DE4-C281-4043-9FEA-925A41220700}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D8F4421-FBBB-4186-B920-5B1EE11113C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D8F4421-FBBB-4186-B920-5B1EE11113C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D8F4421-FBBB-4186-B920-5B1EE11113C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D8F4421-FBBB-4186-B920-5B1EE11113C2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {64477F9F-4C83-4C44-A019-79E71CB997BD}
+	EndGlobalSection
+EndGlobal
