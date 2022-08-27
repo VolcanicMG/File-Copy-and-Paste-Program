@@ -314,6 +314,7 @@ namespace FolderAutoUploader
                     deletionProgressBar.Value++;
                 }));
 
+                dirs.Attributes = FileAttributes.Normal;
                 dirs.Delete(true);
             }
 
